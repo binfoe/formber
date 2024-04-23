@@ -1,3 +1,5 @@
+/* global module */
+
 /**
  * @type {import('eslint-define-config').ESLintConfig}
  */
@@ -23,7 +25,7 @@ module.exports = {
     'import/no-unresolved': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
     '@typescript-eslint/no-non-null-assertion': 'error',
-    'no-console': 'error',
+    'no-console': ['error', { allow: ['error'] }],
     'prettier/prettier': 'error',
     '@typescript-eslint/no-floating-promises': ['error'],
     '@typescript-eslint/no-explicit-any': 'error',
