@@ -1,36 +1,33 @@
-import { Button, Form, Input, InputNumber, Select } from 'antd';
-import { useEffect, useState, type FC } from 'react';
+import type { FormInstance } from 'antd';
+import { Button, Form, Input, InputNumber, Select, Space } from 'antd';
+import { type FC } from 'react';
 import type { DefaultOptionType } from 'antd/es/select';
-import type { FormField, SingleFormField } from '@/field';
-import { getFieldDefaultUx, getUxTypeOptions } from '@/field';
-import AntDesignMinusCircleOutlined from '~icons/ant-design/minus-circle-outlined';
-import AntDesignPlusCircleOutlined from '~icons/ant-design/plus-circle-outlined';
+import { SingleFieldEdit } from './SingleField';
+import { FieldTypeOptions, FormLayout } from './helper';
+import { ArrayFieldEdit } from './ArrayField';
+import { NestFieldEdit } from './NestField';
+import { NestArrayFieldEdit } from './NestArrayField';
+import type {
+  NestFormField,
+  FormField,
+  SingleFormField,
+  ArrayFormField,
+  NestArrayFormField,
+} from '@/field';
 
-const layout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 20 },
-};
-
-const TypeOptions = [
+const WidthOptions: DefaultOptionType[] = [
+  { label: '%', value: '%' },
   {
-    label: '文本',
-    value: 'string',
+    label: 'px',
+    value: 'px',
   },
-  { label: '数值', value: 'number' },
-  { label: '日期', value: 'date' },
-  { label: '布尔', value: 'bool' },
-  { label: '简单数组', value: 'array' },
-  { label: '嵌套对象', value: 'nest' },
-  { label: '对象数组', value: 'nest-array' },
 ];
-
 export const FieldEdit: FC<{
   field: FormField;
   onCancel: () => void;
   onSave: (data: Partial<FormField>) => void;
 }> = ({ field, onCancel, onSave }) => {
   const [form] = Form.useForm<FormField>();
-  const [uxTypeOpts, setUxTypeOpts] = useState<DefaultOptionType[]>([]);
   const submit = async () => {
     try {
       const res = await form.validateFields();
@@ -41,104 +38,74 @@ export const FieldEdit: FC<{
     }
   };
 
-  const fieldType = Form.useWatch('type', form);
-  useEffect(() => {
-    form.setFieldValue('ux', getFieldDefaultUx(fieldType));
-    setUxTypeOpts(getUxTypeOptions(fieldType));
-  }, [fieldType]);
-
-  const uxType = Form.useWatch(['ux', 'type'], form) as SingleFormField['ux']['type'];
-  const [uxOpts, setUxOpts] = useState(false);
-  useEffect(() => {
-    if (uxType === 'select' || uxType === 'checkbox' || uxType === 'radio') {
-      const newOpts = [{ label: '', value: fieldType === 'string' ? '' : 0 }];
-      setUxOpts(true);
-      form.setFieldValue(['ux', 'options'], newOpts);
-    } else {
-      setUxOpts(false);
-    }
-  }, [uxType, fieldType]);
+  const fieldType = Form.useWatch('type', form) as FormField['type'];
+  const wUnit = Form.useWatch(['width', 'u'], form) as FormField['width']['u'];
+  const wPx = wUnit === 'px';
   return (
-    <div className='pt-4'>
-      <Form initialValues={{ name: field.name, type: field.type }} {...layout} form={form}>
-        <Form.Item
-          name='name'
-          required
-          label='字段'
-          rules={[
-            {
-              validator: (_, v, cb) => {
-                if (!v?.length || !v.trim()) cb('不能为空');
-                else if (/^\s*\d/.test(v)) {
-                  cb('不能以数字打头');
-                } else if (/[^_0-9a-z\u4e00-\u9fa5]/.test(v)) {
-                  cb('只能包含中文、英文字母、数字或下滑线');
-                } else if (v.length < 2) {
-                  cb('至少两个字符');
-                } else {
-                  cb();
-                }
-              },
-            },
-          ]}
-        >
-          <Input placeholder='请输入字段名' />
-        </Form.Item>
-        <Form.Item required name='type' label='类型'>
-          <Select options={TypeOptions} />
-        </Form.Item>
-        {!!uxTypeOpts.length && (
-          <Form.Item required name={['ux', 'type']} label='交互'>
-            <Select options={uxTypeOpts} />
+    <div className='flex flex-wrap pt-4'>
+      <div className='w-1/2 pr-4'>
+        <div></div>
+        <Form initialValues={field} {...FormLayout} form={form}>
+          <Form.Item required name='type' label='类型'>
+            <Select options={FieldTypeOptions} />
           </Form.Item>
-        )}
-        {uxOpts && (
-          <div className='flex'>
-            <div className='w-1/6 pt-1 text-right'>选项：</div>
-            <div className='flex-1'>
-              <Form.List name={['ux', 'options']}>
-                {(fields, { remove, add }) => (
-                  <>
-                    {fields.map(({ key, name, ...restField }) => (
-                      <div key={key} className='mb-4 flex items-center gap-2'>
-                        <Form.Item
-                          noStyle
-                          {...restField}
-                          name={[name, 'label']}
-                          rules={[{ required: true }]}
-                        >
-                          <Input placeholder='文本' />
-                        </Form.Item>
-                        <Form.Item noStyle {...restField} name={[name, 'value']} required>
-                          {fieldType === 'string' && <Input />}
-                          {fieldType === 'number' && <InputNumber />}
-                        </Form.Item>
-                        <Button
-                          className='flex-shrink-0'
-                          onClick={() => {
-                            add({ label: '', value: fieldType === 'string' ? '' : 0 });
-                          }}
-                          icon={<AntDesignPlusCircleOutlined />}
-                        />
-                        {fields.length > 1 && (
-                          <Button
-                            className='flex-shrink-0'
-                            onClick={() => {
-                              remove(name);
-                            }}
-                            icon={<AntDesignMinusCircleOutlined />}
-                          />
-                        )}
-                      </div>
-                    ))}
-                  </>
-                )}
-              </Form.List>
-            </div>
-          </div>
-        )}
-      </Form>
-      <div className='flex items-center justify-end gap-2'>
+          {fieldType !== 'placeholder' && (
+            <Form.Item
+              name='name'
+              required
+              label='字段'
+              rules={[
+                {
+                  validator: (_, v) => {
+                    if (!v?.length || !v.trim()) return Promise.reject('不能为空');
+                    else if (/^\s*\d/.test(v)) {
+                      return Promise.reject('不能以数字打头');
+                    } else if (/[^_0-9a-z\u4e00-\u9fa5]/.test(v)) {
+                      return Promise.reject('只能包含中文、英文字母、数字或下滑线');
+                    } else if (v.length < 2) {
+                      return Promise.reject('至少两个字符');
+                    } else {
+                      return Promise.resolve();
+                    }
+                  },
+                },
+              ]}
+            >
+              <Input placeholder='请输入字段名' />
+            </Form.Item>
+          )}
+
+          {fieldType === 'placeholder' ? null : fieldType === 'nest-array' ? (
+            <NestArrayFieldEdit form={form as FormInstance<NestArrayFormField>} />
+          ) : fieldType === 'nest' ? (
+            <NestFieldEdit form={form as FormInstance<NestFormField>} />
+          ) : fieldType === 'array' ? (
+            <ArrayFieldEdit form={form as FormInstance<ArrayFormField>} />
+          ) : (
+            <SingleFieldEdit form={form as FormInstance<SingleFormField>} />
+          )}
+        </Form>
+      </div>
+      <div className='w-1/2 pl-4'>
+        <Form initialValues={{ width: field.width }} {...FormLayout} form={form}>
+          <Form.Item label='宽度'>
+            <Space.Compact className='w-full'>
+              <Form.Item required noStyle name={['width', 'v']}>
+                <InputNumber
+                  min={wPx ? 80 : 10}
+                  max={wPx ? 2000 : 100}
+                  step={1}
+                  className='flex-1'
+                />
+              </Form.Item>
+              <Form.Item noStyle name={['width', 'u']}>
+                <Select style={{ width: '30%' }} options={WidthOptions} />
+              </Form.Item>
+            </Space.Compact>
+          </Form.Item>
+        </Form>
+      </div>
+      <div className='flex w-full items-center justify-end gap-2'>
         <Button
           onClick={() => {
             onCancel();

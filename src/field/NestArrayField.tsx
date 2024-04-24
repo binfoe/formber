@@ -1,9 +1,9 @@
 import type { FC } from 'react';
-import type { NestFormField } from './common';
+import type { NestArrayFormField } from './common';
 import { FieldList } from './Field';
 import { FieldLabel } from './Label';
 
-export const NestField: FC<{ field: NestFormField }> = ({ field }) => {
+export const NestArrayField: FC<{ field: NestArrayFormField }> = ({ field }) => {
   return (
     <div className='mx-2'>
       <div className='flex w-full items-center rounded-tl-md rounded-tr-md border border-b-0 border-solid border-gray-300 bg-slate-100 px-2 py-2'>

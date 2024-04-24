@@ -1,4 +1,3 @@
-import type { DefaultOptionType } from 'antd/es/select';
 import type { GlobalFormConfig } from '../setting';
 import type {
   FormFieldWidth,
@@ -6,7 +5,9 @@ import type {
   BaseFormField,
   FormField,
   SingleFormField,
+  NestFormField,
 } from './common';
+import { getFieldDefaultUx } from '@/edit/helper';
 import { uid } from '@/util';
 
 export function newSingleFormField(
@@ -27,9 +28,13 @@ export function newSingleFormField(
   } as SingleFormField;
 }
 export function newArrayFormField(cfg: GlobalFormConfig, data?: Partial<BaseFormField>) {
-  const x = newSingleFormField(cfg, data) as unknown as ArrayFormField;
-  x.type = 'array';
+  const x = newSingleFormField(cfg, { ...data, type: 'array' }) as unknown as ArrayFormField;
   x.itemType = 'string';
+  return x;
+}
+export function newNestFormField(cfg: GlobalFormConfig, data?: Partial<BaseFormField>) {
+  const x = newSingleFormField(cfg, { ...data, type: 'nest' }) as unknown as NestFormField;
+  x.items = [newSingleFormField(cfg)];
   return x;
 }
 
@@ -43,70 +48,11 @@ export function getFieldDefaultWidth(
   return cfg.singleFieldWidth;
 }
 
-const StrUxTypeOptions: DefaultOptionType[] = [
-  {
-    label: '输入框',
-    value: 'input',
-  },
-  {
-    label: '下拉选择',
-    value: 'select',
-  },
-  {
-    label: '单选按钮',
-    value: 'radio',
-  },
-];
-const NumUxTypeOptions: DefaultOptionType[] = [
-  {
-    label: '输入框',
-    value: 'number-input',
-  },
-  {
-    label: '下拉选择',
-    value: 'select',
-  },
-  {
-    label: '单选按钮',
-    value: 'radio',
-  },
-];
-const DateUxTypeOptions: DefaultOptionType[] = [
-  {
-    label: '选择日期',
-    value: 'picker',
-  },
-  {
-    label: '输入框',
-    value: 'input',
-  },
-  {
-    label: '下拉选择',
-    value: 'select',
-  },
-];
-const BoolUxTypeOptions: DefaultOptionType[] = [
-  {
-    label: '切换按钮',
-    value: 'switch',
-  },
-  {
-    label: '单选按钮',
-    value: 'radio',
-  },
-];
-export function getUxTypeOptions(type: FormField['type']) {
-  if (type === 'string') return StrUxTypeOptions;
-  if (type === 'number') return NumUxTypeOptions;
-  if (type === 'bool') return BoolUxTypeOptions;
-  if (type === 'date') return DateUxTypeOptions;
-  return [];
-}
-
-export function getFieldDefaultUx(type: FormField['type']): SingleFormField['ux'] {
-  if (type === 'string') return { type: 'input' };
-  if (type === 'date') return { type: 'picker' };
-  if (type === 'number') return { type: 'number-input' };
-  if (type === 'bool') return { type: 'switch' };
-  return { type: 'input' };
+const emptyLabels: Partial<Record<FormField['type'], string>> = {
+  array: '普通数组',
+  'nest-array': '对象数组',
+  nest: '嵌套对象',
+};
+export function getFieldDisplayLabel(field: FormField) {
+  return field.name || emptyLabels[field.type] || '普通字段';
 }

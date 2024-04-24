@@ -9,7 +9,7 @@ export interface GlobalFormConfig {
 }
 export function newGlobalFormConfig() {
   return {
-    singleFieldWidth: { v: 25, u: '%' },
+    singleFieldWidth: { v: 20, u: '%' },
     arrayFieldWidth: { v: 100, u: '%' },
     nestFieldWidth: { v: 100, u: '%' },
     nestArrayFieldWidth: { v: 100, u: '%' },

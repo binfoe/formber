@@ -3,13 +3,17 @@ import type { DefaultOptionType } from 'antd/es/select';
 export interface FormFieldWidth {
   /** value，宽度值 */
   v: number;
-  /** unit，宽度单位 */
+  /** unit，宽度单位。 */
   u: 'px' | '%';
 }
 export type BaseFormField = {
   id: string;
   name: string;
   width: FormFieldWidth;
+};
+/** 占位字段，用于支撑排版，没有实际字段内容 */
+export type PlaceholderFormField = BaseFormField & {
+  type: 'placeholder';
 };
 export type SingleFormField = BaseFormField & {
   type: 'string' | 'number' | 'bool' | 'date';
@@ -34,4 +38,9 @@ export type NestArrayFormField = BaseFormField & {
   type: 'nest-array';
   items: FormField[];
 };
-export type FormField = SingleFormField | ArrayFormField | NestFormField | NestArrayFormField;
+export type FormField =
+  | PlaceholderFormField
+  | SingleFormField
+  | ArrayFormField
+  | NestFormField
+  | NestArrayFormField;
