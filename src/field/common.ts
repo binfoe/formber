@@ -3,8 +3,8 @@ import type { DefaultOptionType } from 'antd/es/select';
 export interface FormFieldWidth {
   /** value，宽度值 */
   v: number;
-  /** unit，宽度单位。 */
-  u: 'px' | '%';
+  /** unit，宽度单位。 '-' 代表继承表单全局配置的默认宽度 */
+  u: 'px' | '%' | '-';
 }
 export type BaseFormField = {
   id: string;

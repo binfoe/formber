@@ -1,7 +1,8 @@
+/* global process */
 /** @type {import('tailwindcss').Config} */
 export default {
   corePlugins: {
     preflight: false,
   },
-  content: ['./src/**/*.tsx'],
+  content: process.env.FORMERDEMO ? ['./src/**/*.tsx', './demo/**/*.tsx'] : ['./src/**/*.tsx'],
 };

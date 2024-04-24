@@ -1,16 +1,14 @@
 import type { FormInstance } from 'antd';
 import { Form } from 'antd';
-import { useContext, useEffect, type FC } from 'react';
-import { newSingleFormField, type NestFormField, getFieldDefaultWidth } from '@/field';
-import { globalFormConfigContext } from '@/setting';
+import { useEffect, type FC } from 'react';
+import { newSingleFormField, type NestFormField } from '@/field';
 
 export const NestFieldEdit: FC<{
   form: FormInstance<NestFormField>;
 }> = ({ form }) => {
-  const ctx = useContext(globalFormConfigContext);
   useEffect(() => {
-    form.setFieldValue('items', [newSingleFormField(ctx)]);
-    form.setFieldValue('width', getFieldDefaultWidth(ctx, 'nest'));
+    form.setFieldValue('items', [newSingleFormField()]);
+    form.setFieldValue('width', null);
   }, [form]);
 
   return (

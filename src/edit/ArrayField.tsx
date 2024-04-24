@@ -1,6 +1,6 @@
 import type { FormInstance } from 'antd';
 import { Form, Select } from 'antd';
-import { useContext, useEffect, useMemo, type FC } from 'react';
+import { useEffect, useMemo, type FC } from 'react';
 import {
   SingleFieldTypeOptions,
   getFieldDefaultUx,
@@ -8,8 +8,7 @@ import {
   isUxNeedOpts,
 } from './helper';
 import { UxOptions } from './UxOptions';
-import { getFieldDefaultWidth, type ArrayFormField } from '@/field';
-import { globalFormConfigContext } from '@/setting';
+import { type ArrayFormField } from '@/field';
 
 export const ArrayFieldEdit: FC<{
   form: FormInstance<ArrayFormField>;
@@ -18,9 +17,8 @@ export const ArrayFieldEdit: FC<{
   const uxTypeOpts = useMemo(() => getUxTypeOptions('array'), []);
   const uxType = Form.useWatch(['ux', 'type'], form);
   const needUxOpts = isUxNeedOpts(uxType);
-  const ctx = useContext(globalFormConfigContext);
   useEffect(() => {
-    form.setFieldValue('width', getFieldDefaultWidth(ctx, 'array'));
+    form.setFieldValue('width', null);
     form.setFieldValue('itemType', 'string');
     form.setFieldValue('ux', getFieldDefaultUx('array'));
   }, [form]);

@@ -11,11 +11,11 @@ import { cs } from '@/util';
 export interface FieldControlProps {
   onInsert: (position: 'pre' | 'post') => void;
   onSort: (position: 'pre' | 'post') => void;
-  onEdit: () => void;
   onDel: () => void;
 }
 export const FieldControl: FC<
   FieldControlProps & {
+    onEdit: () => void;
     mode?: 'cover' | 'float';
     visible: boolean;
   }

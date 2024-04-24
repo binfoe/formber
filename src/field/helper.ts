@@ -1,6 +1,5 @@
-import type { GlobalFormConfig } from '../setting';
+import type { FormConfig } from '../form';
 import type {
-  FormFieldWidth,
   ArrayFormField,
   BaseFormField,
   FormField,
@@ -11,7 +10,6 @@ import { getFieldDefaultUx } from '@/edit/helper';
 import { uid } from '@/util';
 
 export function newSingleFormField(
-  cfg: GlobalFormConfig,
   data?: Partial<
     BaseFormField & {
       type: FormField['type'];
@@ -23,25 +21,22 @@ export function newSingleFormField(
     id: uid(),
     name: '',
     type,
-    width: data?.width ?? getFieldDefaultWidth(cfg, type),
+    width: data?.width ?? { v: 0, u: '-' },
     ux: getFieldDefaultUx(type),
   } as SingleFormField;
 }
-export function newArrayFormField(cfg: GlobalFormConfig, data?: Partial<BaseFormField>) {
-  const x = newSingleFormField(cfg, { ...data, type: 'array' }) as unknown as ArrayFormField;
+export function newArrayFormField(data?: Partial<BaseFormField>) {
+  const x = newSingleFormField({ ...data, type: 'array' }) as unknown as ArrayFormField;
   x.itemType = 'string';
   return x;
 }
-export function newNestFormField(cfg: GlobalFormConfig, data?: Partial<BaseFormField>) {
-  const x = newSingleFormField(cfg, { ...data, type: 'nest' }) as unknown as NestFormField;
-  x.items = [newSingleFormField(cfg)];
+export function newNestFormField(data?: Partial<BaseFormField>) {
+  const x = newSingleFormField({ ...data, type: 'nest' }) as unknown as NestFormField;
+  x.items = [newSingleFormField()];
   return x;
 }
 
-export function getFieldDefaultWidth(
-  cfg: GlobalFormConfig,
-  type: FormField['type'],
-): FormFieldWidth {
+export function getFieldDefaultWidth(cfg: FormConfig, type: FormField['type']) {
   if (type === 'nest-array') return cfg.nestArrayFieldWidth;
   if (type === 'array') return cfg.arrayFieldWidth;
   if (type === 'nest') return cfg.nestFieldWidth;

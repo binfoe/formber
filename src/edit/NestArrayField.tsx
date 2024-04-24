@@ -1,17 +1,15 @@
 import type { FormInstance } from 'antd';
 import { Form } from 'antd';
-import { useContext, useEffect, type FC } from 'react';
+import { useEffect, type FC } from 'react';
 import type { NestArrayFormField } from '@/field';
-import { getFieldDefaultWidth, newSingleFormField } from '@/field';
-import { globalFormConfigContext } from '@/setting';
+import { newSingleFormField } from '@/field';
 
 export const NestArrayFieldEdit: FC<{
   form: FormInstance<NestArrayFormField>;
 }> = ({ form }) => {
-  const ctx = useContext(globalFormConfigContext);
   useEffect(() => {
-    form.setFieldValue('items', [newSingleFormField(ctx)]);
-    form.setFieldValue('width', getFieldDefaultWidth(ctx, 'nest-array'));
+    form.setFieldValue('items', [newSingleFormField()]);
+    form.setFieldValue('width', null);
   }, [form]);
 
   return (

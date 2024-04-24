@@ -12,12 +12,12 @@ import { FieldControl, type FieldControlProps } from './Control';
 import { SingleField } from './SingleField';
 import { NestField } from './NestField';
 import { ArrayField } from './ArrayField';
-import { newSingleFormField } from './helper';
+import { getFieldDefaultWidth, newSingleFormField } from './helper';
 import { NestArrayField } from './NestArrayField';
 import { PlaceholderField } from './PlaceholderField';
 import { FieldEdit } from '@/edit';
 import { cs } from '@/util';
-import { globalFormConfigContext } from '@/setting';
+import { globalFormConfigContext } from '@/form';
 
 function swap<T>(arr: T[], ia: number, ib: number) {
   const tmp = arr[ib];
@@ -25,7 +25,6 @@ function swap<T>(arr: T[], ia: number, ib: number) {
   arr[ia] = tmp;
 }
 export const FieldList: FC<{ fields: FormField[] }> = ({ fields }) => {
-  const ctx = useContext(globalFormConfigContext);
   const [copyFields, setFields] = useState<FormField[]>([]);
   useEffect(() => {
     setFields(fields ? fields.slice() : []);
@@ -37,10 +36,11 @@ export const FieldList: FC<{ fields: FormField[] }> = ({ fields }) => {
     <Field
       onInsert={(position) => {
         const v = copyFields.slice();
-        v.splice(position === 'pre' ? idx : idx + 1, 0, newSingleFormField(ctx));
+        v.splice(position === 'pre' ? idx : idx + 1, 0, newSingleFormField());
         updateFields(v);
       }}
-      onEdit={() => {
+      onEdit={(data) => {
+        Object.assign(field, data);
         setFields((v) => v.slice());
       }}
       onDel={() => {
@@ -71,19 +71,23 @@ export const FieldList: FC<{ fields: FormField[] }> = ({ fields }) => {
 };
 export const Field: FC<
   FieldControlProps & {
+    onEdit: (data: Partial<FormField>) => void;
     field: FormField;
   }
 > = ({ field, onEdit, ...props }) => {
   const type = field.type;
   const [editOpen, setEditOpen] = useState(false);
   const [ctrlVis, setCtrlVis] = useState(false);
+  const cfg = useContext(globalFormConfigContext);
+  const width =
+    field.width?.u && field.width.u !== '-' ? field.width : getFieldDefaultWidth(cfg, type);
+
   return (
     <>
       <Modal
         getContainer={() => document.body}
         open={editOpen}
         title='编辑字段'
-        width={650}
         destroyOnClose
         onCancel={() => {
           setEditOpen(false);
@@ -93,9 +97,8 @@ export const Field: FC<
         {editOpen && (
           <FieldEdit
             onSave={(data) => {
-              Object.assign(field, data);
               setEditOpen(false);
-              onEdit();
+              onEdit(data);
             }}
             onCancel={() => {
               setEditOpen(false);
@@ -112,7 +115,7 @@ export const Field: FC<
           setCtrlVis(false);
         }}
         style={{
-          width: `${field.width.v}${field.width.u}`,
+          width: `${width.v}${width.u}`,
         }}
         className={cs(`cursor relative flex flex-col`)}
       >
