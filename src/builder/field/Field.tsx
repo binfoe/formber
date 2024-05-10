@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState, type FC } from 'react';
 import { Modal, message } from 'antd';
+import { FieldEdit } from '../edit';
 import type {
   ArrayFormField,
   FormField,
@@ -7,7 +8,7 @@ import type {
   NestFormField,
   PlaceholderFormField,
   SingleFormField,
-} from './common';
+} from '../../common';
 import { FieldControl, type FieldControlProps } from './Control';
 import { SingleField } from './SingleField';
 import { NestField } from './NestField';
@@ -15,7 +16,6 @@ import { ArrayField } from './ArrayField';
 import { getFieldDefaultWidth, newSingleFormField } from './helper';
 import { NestArrayField } from './NestArrayField';
 import { PlaceholderField } from './PlaceholderField';
-import { FieldEdit } from '@/edit';
 import { cs } from '@/util';
 import { globalFormConfigContext } from '@/form';
 
@@ -69,6 +69,7 @@ export const FieldList: FC<{ fields: FormField[] }> = ({ fields }) => {
     />
   ));
 };
+
 export const Field: FC<
   FieldControlProps & {
     onEdit: (data: Partial<FormField>) => void;

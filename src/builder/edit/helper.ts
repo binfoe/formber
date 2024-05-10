@@ -1,5 +1,5 @@
 import type { DefaultOptionType } from 'antd/es/select';
-import type { ArrayFormField, FormField, SingleFormField } from '@/field';
+import type { ArrayFormField, FormField, SingleFormField } from '@/common';
 
 export const FormLayout = {
   labelCol: { span: 4 },
@@ -14,6 +14,14 @@ export const SingleFieldTypeOptions = [
   { label: '数值', value: 'number' },
   { label: '日期', value: 'date' },
   { label: '布尔', value: 'bool' },
+];
+export const ArrayFieldTypeOptions = [
+  {
+    label: '文本',
+    value: 'string',
+  },
+  { label: '数值', value: 'number' },
+  { label: '日期', value: 'date' },
 ];
 export const FieldTypeOptions = [
   ...SingleFieldTypeOptions,

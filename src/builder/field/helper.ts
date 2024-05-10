@@ -1,12 +1,13 @@
-import type { FormConfig } from '../form';
+import { getFieldDefaultUx } from '../edit/helper';
 import type {
   ArrayFormField,
   BaseFormField,
   FormField,
   SingleFormField,
   NestFormField,
-} from './common';
-import { getFieldDefaultUx } from '@/edit/helper';
+  NestArrayFormField,
+} from '../../common';
+import type { FormConfig } from '@/form';
 import { uid } from '@/util';
 
 export function newSingleFormField(
@@ -19,7 +20,8 @@ export function newSingleFormField(
   const type = data?.type ?? 'string';
   return {
     id: uid(),
-    name: '',
+    name: data?.name ?? '',
+    tip: data?.tip,
     type,
     width: data?.width ?? { v: 0, u: '-' },
     ux: getFieldDefaultUx(type),
@@ -32,6 +34,11 @@ export function newArrayFormField(data?: Partial<BaseFormField>) {
 }
 export function newNestFormField(data?: Partial<BaseFormField>) {
   const x = newSingleFormField({ ...data, type: 'nest' }) as unknown as NestFormField;
+  x.items = [newSingleFormField()];
+  return x;
+}
+export function newNestArrayFormField(data?: Partial<BaseFormField>) {
+  const x = newSingleFormField({ ...data, type: 'nest-array' }) as unknown as NestArrayFormField;
   x.items = [newSingleFormField()];
   return x;
 }

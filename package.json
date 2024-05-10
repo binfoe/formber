@@ -60,6 +60,7 @@
     "prettier-plugin-tailwindcss": "^0.5.14",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-hook-form": "^7.51.4",
     "tailwindcss": "^3.4.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5",
@@ -69,6 +70,7 @@
   },
   "peerDependencies": {
     "antd": "*",
-    "react": "*"
+    "react": "*",
+    "react-hook-form": "*"
   }
 }

@@ -1,7 +1,7 @@
 import { useMemo, type FC } from 'react';
 import { Button, Input, InputNumber } from 'antd';
-import type { ArrayFormField } from './common';
-import { FieldLabel } from './Label';
+import type { ArrayFormField } from '@/common';
+import { FieldLabel } from '@/builder/field';
 import AntDesignDeleteOutlined from '~icons/ant-design/delete-outlined';
 import AntDesignPlusCircleOutlined from '~icons/ant-design/plus-circle-outlined';
 

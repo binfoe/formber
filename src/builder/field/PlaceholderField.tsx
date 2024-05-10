@@ -1,5 +1,5 @@
 import { type FC } from 'react';
-import type { PlaceholderFormField } from './common';
+import type { PlaceholderFormField } from '../../common';
 import { FieldLabel } from './Label';
 
 export const PlaceholderField: FC<{ field: PlaceholderFormField }> = ({ field }) => {

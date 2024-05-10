@@ -1,19 +1,20 @@
 import type { FormInstance } from 'antd';
 import { Button, Form, Input, InputNumber, Select, Space } from 'antd';
-import { useEffect, useState, type FC } from 'react';
+import { useEffect, type FC } from 'react';
 import type { DefaultOptionType } from 'antd/es/select';
+import { newSingleFormField } from '../field';
 import { SingleFieldEdit } from './SingleField';
-import { FieldTypeOptions, FormLayout } from './helper';
+import { FieldTypeOptions, FormLayout, getFieldDefaultUx } from './helper';
 import { ArrayFieldEdit } from './ArrayField';
 import { NestFieldEdit } from './NestField';
 import { NestArrayFieldEdit } from './NestArrayField';
-import type {
-  NestFormField,
-  FormField,
-  SingleFormField,
-  ArrayFormField,
-  NestArrayFormField,
-} from '@/field';
+import {
+  type NestFormField,
+  type FormField,
+  type SingleFormField,
+  type ArrayFormField,
+  type NestArrayFormField,
+} from '@/common';
 
 const WidthOptions: DefaultOptionType[] = [
   { label: '自动', value: '-' },
@@ -41,8 +42,29 @@ export const FieldEdit: FC<{
   useEffect(() => {
     form.setFieldsValue(field);
   }, [field]);
+
+  const resetField = (type: FormField['type']) => {
+    form.setFieldValue('width', { u: '-' });
+    switch (type) {
+      case 'placeholder':
+        break;
+      case 'array':
+        form.setFieldValue('itemType', 'string');
+        form.setFieldValue('ux', getFieldDefaultUx('array'));
+        break;
+      case 'nest-array':
+      case 'nest':
+        form.setFieldValue('items', [newSingleFormField()]);
+        break;
+      default:
+        form.setFieldValue('ux', getFieldDefaultUx(type));
+        break;
+    }
+  };
+
+  const wu = Form.useWatch(['width', 'u'], form);
   const fieldType = Form.useWatch('type', form) as FormField['type'];
-  const [wu, setWu] = useState(field.width?.u);
+
   return (
     <div className='pt-4'>
       <Form {...FormLayout} form={form}>
@@ -71,12 +93,7 @@ export const FieldEdit: FC<{
             <Form.Item noStyle name={['width', 'u']}>
               <Select
                 onChange={(v) => {
-                  setWu(v);
-                  if (!v) {
-                    //
-                  } else {
-                    form.setFieldValue(['width', 'v'], v === 'px' ? 120 : 20);
-                  }
+                  form.setFieldValue(['width', 'v'], v === '-' ? null : v === 'px' ? 120 : 20);
                 }}
                 style={{ width: '30%' }}
                 options={WidthOptions}
@@ -85,32 +102,42 @@ export const FieldEdit: FC<{
           </Space.Compact>
         </Form.Item>
         <Form.Item required name='type' label='类型'>
-          <Select options={FieldTypeOptions} />
+          <Select
+            options={FieldTypeOptions}
+            onChange={(type) => {
+              resetField(type);
+            }}
+          />
         </Form.Item>
         {fieldType !== 'placeholder' && (
-          <Form.Item
-            name='name'
-            required
-            label='字段'
-            rules={[
-              {
-                validator: (_, v) => {
-                  if (!v?.length || !v.trim()) return Promise.reject('不能为空');
-                  else if (/^\s*\d/.test(v)) {
-                    return Promise.reject('不能以数字打头');
-                  } else if (/[^_0-9a-z\u4e00-\u9fa5]/.test(v)) {
-                    return Promise.reject('只能包含中文、英文字母、数字或下滑线');
-                  } else if (v.length < 2) {
-                    return Promise.reject('至少两个字符');
-                  } else {
-                    return Promise.resolve();
-                  }
+          <>
+            <Form.Item
+              name='name'
+              required
+              label='字段'
+              rules={[
+                {
+                  validator: (_, v) => {
+                    if (!v?.length || !v.trim()) return Promise.reject('不能为空');
+                    else if (/^\s*\d/.test(v)) {
+                      return Promise.reject('不能以数字打头');
+                    } else if (/[^_0-9a-z\u4e00-\u9fa5]/.test(v)) {
+                      return Promise.reject('只能包含中文、英文字母、数字或下滑线');
+                    } else if (v.length < 2) {
+                      return Promise.reject('至少两个字符');
+                    } else {
+                      return Promise.resolve();
+                    }
+                  },
                 },
-              },
-            ]}
-          >
-            <Input placeholder='请输入字段名' />
-          </Form.Item>
+              ]}
+            >
+              <Input placeholder='请输入字段名' />
+            </Form.Item>
+            <Form.Item name='tip' label='提示'>
+              <Input placeholder='提示信息用于字段的 Tooltip 提示' />
+            </Form.Item>
+          </>
         )}
 
         {fieldType === 'placeholder' ? null : fieldType === 'nest-array' ? (

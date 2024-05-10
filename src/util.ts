@@ -1,3 +1,6 @@
+import type { DependencyList, EffectCallback } from 'react';
+import { useEffect, useRef } from 'react';
+
 export function uid() {
   return Date.now().toString(32) + Math.floor(Math.random() * 0xffff).toString(32);
 }
@@ -27,4 +30,15 @@ export function cs(...args: (string | Record<string, boolean> | boolean | null |
     }
   });
   return segs.join(' ');
+}
+
+export function useNonFirstEffect(effect: EffectCallback, deps: DependencyList) {
+  const first = useRef(true);
+  useEffect(() => {
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+    effect();
+  }, deps);
 }

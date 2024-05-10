@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react';
-import type { FormField } from './common';
+import { Tooltip } from 'antd';
+import type { FormField } from '../../common';
 import { getFieldDisplayLabel } from './helper';
 import CarbonStringText from '~icons/carbon/string-text';
 import CarbonStringInteger from '~icons/carbon/string-integer';
@@ -8,6 +9,7 @@ import MaterialSymbolsDataArray from '~icons/material-symbols/data-array';
 import MaterialSymbolsDataObject from '~icons/material-symbols/data-object';
 import MaterialSymbolsLightDateRangeSharp from '~icons/material-symbols-light/date-range-sharp';
 import { cs } from '@/util';
+import AntDesignQuestionCircleOutlined from '~icons/ant-design/question-circle-outlined';
 
 const Ic: Record<FormField['type'], ReactNode> = {
   string: <CarbonStringText />,
@@ -32,6 +34,11 @@ export const FieldLabel: FC<{ className?: string; field: FormField }> = ({ class
       {Ic[field.type]}
       {field.type === 'array' && Ic[field.itemType]}
       {getFieldDisplayLabel(field)}
+      {field.tip && (
+        <Tooltip title={field.tip}>
+          <AntDesignQuestionCircleOutlined className='cursor-pointer text-xs text-gray-400' />
+        </Tooltip>
+      )}
     </label>
   );
 };

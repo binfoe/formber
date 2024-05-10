@@ -15,7 +15,7 @@ export default defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
-      external: ['react', 'react/jsx-runtime', 'antd'],
+      external: ['react', 'react/jsx-runtime', 'antd', 'react-hook-form'],
       output: {
         assetFileNames(chunkInfo) {
           if (chunkInfo.name === 'style.css') return 'index.css';

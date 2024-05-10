@@ -1,7 +1,7 @@
 import type { FC } from 'react';
-import type { NestFormField } from './common';
-import { FieldList } from './Field';
+import type { NestFormField } from '../../common';
 import { FieldLabel } from './Label';
+import { FieldList } from './Field';
 
 export const NestField: FC<{ field: NestFormField }> = ({ field }) => {
   return (

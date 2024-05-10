@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import type { FormField, FormFieldWidth } from './field';
+import type { FormField, FormFieldWidth } from './common';
 export interface Form {
   name: string;
   fields: FormField[];

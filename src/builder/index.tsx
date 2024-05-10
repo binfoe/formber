@@ -1,10 +1,10 @@
 import { useState, type FC } from 'react';
 import { Button, Modal } from 'antd';
-import type { Form } from './form';
-import { globalFormConfigContext } from './form';
+import type { Form } from '../form';
+import { globalFormConfigContext } from '../form';
+import { cs } from '../util';
+import { FormSetting } from '../setting';
 import { FieldList } from './field';
-import { cs } from './util';
-import { FormSetting } from './setting';
 import AntDesignSettingOutlined from '~icons/ant-design/setting-outlined';
 
 export const FormBuilder: FC<{

@@ -1,6 +1,6 @@
 import { type FC } from 'react';
 import { Checkbox, DatePicker, Input, InputNumber, Radio, Select, Switch } from 'antd';
-import type { SingleFormField } from './common';
+import type { SingleFormField } from '../../common';
 import { FieldLabel } from './Label';
 
 export interface SingleFieldProps {

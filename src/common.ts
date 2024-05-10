@@ -9,6 +9,7 @@ export interface FormFieldWidth {
 export type BaseFormField = {
   id: string;
   name: string;
+  tip?: string;
   width: FormFieldWidth;
 };
 /** 占位字段，用于支撑排版，没有实际字段内容 */
@@ -19,7 +20,7 @@ export type SingleFormField = BaseFormField & {
   type: 'string' | 'number' | 'bool' | 'date';
   ux: {
     type: 'input' | 'number-input' | 'select' | 'radio' | 'switch' | 'checkbox' | 'picker';
-    options?: DefaultOptionType[];
+    options?: { label: string; value: unknown }[];
   };
 };
 export type ArrayFormField = BaseFormField & {
