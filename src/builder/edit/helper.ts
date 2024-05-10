@@ -1,5 +1,4 @@
-import type { DefaultOptionType } from 'antd/es/select';
-import type { ArrayFormField, FormField, SingleFormField } from '@/common';
+import type { SelectOption, SingleFormField } from '@/common';
 
 export const FormLayout = {
   labelCol: { span: 4 },
@@ -31,22 +30,15 @@ export const FieldTypeOptions = [
   { label: '占位空白', value: 'placeholder' },
 ];
 
-export function isUxNeedOpts(uxType: SingleFormField['ux']['type']) {
-  return uxType === 'select' || uxType === 'radio' || uxType === 'checkbox';
-}
-
-export function getFieldDefaultUx(
-  type: FormField['type'],
-): SingleFormField['ux'] | ArrayFormField['ux'] {
+export function getFieldDefaultUx(type: SingleFormField['type']): SingleFormField['ux'] {
   if (type === 'string') return { type: 'input' };
   if (type === 'date') return { type: 'picker' };
   if (type === 'number') return { type: 'number-input' };
-  if (type === 'bool') return { type: 'switch' };
-  if (type === 'array') return { type: 'input' };
+  if (type === 'bool') return { type: 'radio', options: ['是', '否'] };
   return { type: 'input' };
 }
 
-const StrUxTypeOptions: DefaultOptionType[] = [
+export const StrUxTypeOptions: SelectOption[] = [
   {
     label: '输入框',
     value: 'input',
@@ -60,7 +52,7 @@ const StrUxTypeOptions: DefaultOptionType[] = [
     value: 'radio',
   },
 ];
-const NumUxTypeOptions: DefaultOptionType[] = [
+export const NumUxTypeOptions: SelectOption[] = [
   {
     label: '输入框',
     value: 'number-input',
@@ -74,7 +66,7 @@ const NumUxTypeOptions: DefaultOptionType[] = [
     value: 'radio',
   },
 ];
-const DateUxTypeOptions: DefaultOptionType[] = [
+export const DateUxTypeOptions: SelectOption[] = [
   {
     label: '选择日期',
     value: 'picker',
@@ -88,7 +80,7 @@ const DateUxTypeOptions: DefaultOptionType[] = [
     value: 'select',
   },
 ];
-const BoolUxTypeOptions: DefaultOptionType[] = [
+export const BoolUxTypeOptions: SelectOption[] = [
   {
     label: '切换按钮',
     value: 'switch',
@@ -98,7 +90,7 @@ const BoolUxTypeOptions: DefaultOptionType[] = [
     value: 'radio',
   },
 ];
-const ArrayUxTypeOptions: DefaultOptionType[] = [
+export const ArrayUxTypeOptions: SelectOption[] = [
   {
     label: '输入框',
     value: 'input',
@@ -106,11 +98,3 @@ const ArrayUxTypeOptions: DefaultOptionType[] = [
   { label: '下拉多选', value: 'select' },
   { label: '多选项', value: 'checkbox' },
 ];
-export function getUxTypeOptions(type: FormField['type']) {
-  if (type === 'string') return StrUxTypeOptions;
-  if (type === 'number') return NumUxTypeOptions;
-  if (type === 'bool') return BoolUxTypeOptions;
-  if (type === 'date') return DateUxTypeOptions;
-  if (type === 'array') return ArrayUxTypeOptions;
-  return [];
-}

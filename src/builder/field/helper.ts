@@ -7,38 +7,36 @@ import type {
   NestFormField,
   NestArrayFormField,
 } from '../../common';
-import type { FormConfig } from '@/form';
+import { type FormConfig } from '@/form';
 import { uid } from '@/util';
 
-export function newSingleFormField(
-  data?: Partial<
-    BaseFormField & {
-      type: FormField['type'];
-    }
-  >,
-) {
-  const type = data?.type ?? 'string';
+function newFormField(type: FormField['type'], data?: Partial<BaseFormField>) {
   return {
     id: uid(),
     name: data?.name ?? '',
     tip: data?.tip,
     type,
     width: data?.width ?? { v: 0, u: '-' },
-    ux: getFieldDefaultUx(type),
-  } as SingleFormField;
+  };
 }
-export function newArrayFormField(data?: Partial<BaseFormField>) {
-  const x = newSingleFormField({ ...data, type: 'array' }) as unknown as ArrayFormField;
-  x.itemType = 'string';
+export function newSingleFormField(data?: Partial<SingleFormField>) {
+  const type = data?.type ?? 'string';
+  const x = newFormField(type, data) as SingleFormField;
+  x.ux = data?.ux ?? getFieldDefaultUx(type);
   return x;
 }
-export function newNestFormField(data?: Partial<BaseFormField>) {
-  const x = newSingleFormField({ ...data, type: 'nest' }) as unknown as NestFormField;
+export function newArrayFormField(data?: Partial<Omit<ArrayFormField, 'type'>>) {
+  const x = newFormField('array', data) as ArrayFormField;
+  x.itemType = data?.itemType ?? 'string';
+  return x;
+}
+export function newNestFormField(data?: Partial<Omit<NestFormField, 'type'>>) {
+  const x = newFormField('nest', data) as NestFormField;
   x.items = [newSingleFormField()];
   return x;
 }
-export function newNestArrayFormField(data?: Partial<BaseFormField>) {
-  const x = newSingleFormField({ ...data, type: 'nest-array' }) as unknown as NestArrayFormField;
+export function newNestArrayFormField(data?: Partial<Omit<NestArrayFormField, 'type'>>) {
+  const x = newFormField('nest-array', data) as NestArrayFormField;
   x.items = [newSingleFormField()];
   return x;
 }

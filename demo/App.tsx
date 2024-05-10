@@ -1,4 +1,4 @@
-import { useState, type FC } from 'react';
+import { useMemo, useState, type FC } from 'react';
 import zhCN from 'antd/locale/zh_CN';
 import { ConfigProvider, Tabs } from 'antd';
 import './main.css';
@@ -13,30 +13,52 @@ import {
 } from '@/index';
 
 export const DemoApp: FC = () => {
-  const [form, setForm] = useState(() => {
+  const form = useMemo(() => {
     const f = newForm();
+    // const f2 = newNestFormField({
+    //   name: '住宅',
+    // });
+    // f2.items = [
+    //   newSingleFormField({ name: '地址' }),
+    //   newSingleFormField({ name: '产权面积', type: 'number' }),
+    // ];
+    // const f3 = newNestFormField({
+    //   name: '住宅',
+    // });
+    // f3.items = [
+    //   newSingleFormField({ name: '地址' }),
+    //   newSingleFormField({ name: '产权面积', type: 'number' }),
+    //   f2,
+    // ];
     f.fields = [
+      // newSingleFormField({
+      //   name: '姓名',
+      // }),
+      // newSingleFormField({
+      //   name: '年龄',
+      //   type: 'number',
+      // }),
+      // newArrayFormField({
+      //   name: 'AAA',
+      //   itemType: 'date',
+      // }),
       newSingleFormField({
-        name: '姓名',
+        name: 'TTT',
+        type: 'string',
+        ux: {
+          type: 'radio',
+          options: ['AAA', 'BBB'],
+        },
       }),
-      newSingleFormField({
-        name: '年龄',
-        type: 'number',
-      }),
-      // newSingleFormField(),
-      // newSingleFormField(),
-      // newArrayFormField(),
-      // newNestArrayFormField(),
-      // newNestFormField(),
     ];
     return f;
-  });
+  }, []);
   return (
-    <ConfigProvider locale={zhCN}>
+    <ConfigProvider getPopupContainer={() => document.body} locale={zhCN}>
       <div className='p-4'>
         <h1>Former Demo</h1>
         <Tabs
-          defaultActiveKey='submitter'
+          // defaultActiveKey='submitter'
           destroyInactiveTabPane
           items={[
             {
@@ -45,11 +67,8 @@ export const DemoApp: FC = () => {
               children: (
                 <FormBuilder
                   form={form}
-                  onChange={(data) => {
-                    setForm((v) => ({
-                      ...v,
-                      ...data,
-                    }));
+                  onUpdate={() => {
+                    console.log(form);
                   }}
                 />
               ),

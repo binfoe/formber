@@ -1,5 +1,3 @@
-import type { DefaultOptionType } from 'antd/es/select';
-
 export interface FormFieldWidth {
   /** value，宽度值 */
   v: number;
@@ -12,6 +10,10 @@ export type BaseFormField = {
   tip?: string;
   width: FormFieldWidth;
 };
+export interface SelectOption {
+  label: string;
+  value: string;
+}
 /** 占位字段，用于支撑排版，没有实际字段内容 */
 export type PlaceholderFormField = BaseFormField & {
   type: 'placeholder';
@@ -19,16 +21,16 @@ export type PlaceholderFormField = BaseFormField & {
 export type SingleFormField = BaseFormField & {
   type: 'string' | 'number' | 'bool' | 'date';
   ux: {
-    type: 'input' | 'number-input' | 'select' | 'radio' | 'switch' | 'checkbox' | 'picker';
-    options?: { label: string; value: unknown }[];
+    type: 'input' | 'number-input' | 'select' | 'radio' | 'switch' | 'picker';
+    options?: (string | number)[];
   };
 };
 export type ArrayFormField = BaseFormField & {
   type: 'array';
-  itemType: SingleFormField['type'];
+  itemType: 'string' | 'number' | 'date';
   ux: {
     type: 'input' | 'number-input' | 'select' | 'checkbox';
-    options?: DefaultOptionType[];
+    options?: (string | number)[];
   };
 };
 export type NestFormField = BaseFormField & {

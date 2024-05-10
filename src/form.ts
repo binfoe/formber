@@ -27,3 +27,21 @@ export function newFormDefaultConfig() {
   } as FormConfig;
 }
 export const globalFormConfigContext = createContext({} as unknown as FormConfig);
+
+export const globalStyleConfig = {
+  Input: {
+    controlHeight: 33,
+  },
+  // DatePicker: {
+  //   controlHeight: 33,
+  // },
+  InputNumber: {
+    controlHeight: 33,
+  },
+  Select: {
+    controlHeight: 32,
+  },
+  Checkbox: {
+    controlHeight: 32,
+  },
+};

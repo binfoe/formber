@@ -1,5 +1,5 @@
-import { type FC } from 'react';
-import { Checkbox, DatePicker, Input, InputNumber, Radio, Select, Switch } from 'antd';
+import { useMemo, type FC } from 'react';
+import { DatePicker, Input, InputNumber, Radio, Select, Switch } from 'antd';
 import type { SingleFormField } from '../../common';
 import { FieldLabel } from './Label';
 
@@ -8,33 +8,26 @@ export interface SingleFieldProps {
 }
 export const SingleField: FC<SingleFieldProps> = ({ field }) => {
   const ux = field.ux;
+  const opts = useMemo(
+    () =>
+      ux.options?.map((v) => {
+        return {
+          label: v,
+          value: v,
+        };
+      }),
+    [ux.options],
+  );
   return (
     <>
       <FieldLabel className='mb-2 pl-2' field={field} />
-      <div className='px-2'>
-        {ux.type === 'input' && <Input />}
-        {ux.type === 'number-input' && <InputNumber />}
-        {ux.type === 'select' && <Select />}
-        {ux.type === 'radio' && (
-          <Radio.Group>
-            {ux.options?.map((opt) => (
-              <Radio key={opt.label as string} value={opt.value}>
-                {opt.label ?? opt.value}
-              </Radio>
-            ))}
-          </Radio.Group>
-        )}
+      <div className='w-full px-2'>
+        {ux.type === 'input' && <Input className='w-full' />}
+        {ux.type === 'number-input' && <InputNumber className='w-full' />}
+        {ux.type === 'select' && <Select placeholder='选择值' className='w-full' options={opts} />}
+        {ux.type === 'radio' && <Radio.Group className='w-full' options={opts} />}
         {ux.type === 'switch' && <Switch />}
-        {ux.type === 'picker' && <DatePicker />}
-        {ux.type === 'checkbox' && (
-          <Checkbox.Group>
-            {ux.options?.map((opt) => (
-              <Checkbox key={opt.label as string} value={opt.value}>
-                {opt.label ?? opt.value}
-              </Checkbox>
-            ))}
-          </Checkbox.Group>
-        )}
+        {ux.type === 'picker' && <DatePicker className='w-full' />}
       </div>
     </>
   );

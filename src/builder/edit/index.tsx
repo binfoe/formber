@@ -1,7 +1,6 @@
 import type { FormInstance } from 'antd';
 import { Button, Form, Input, InputNumber, Select, Space } from 'antd';
 import { useEffect, type FC } from 'react';
-import type { DefaultOptionType } from 'antd/es/select';
 import { newSingleFormField } from '../field';
 import { SingleFieldEdit } from './SingleField';
 import { FieldTypeOptions, FormLayout, getFieldDefaultUx } from './helper';
@@ -9,6 +8,7 @@ import { ArrayFieldEdit } from './ArrayField';
 import { NestFieldEdit } from './NestField';
 import { NestArrayFieldEdit } from './NestArrayField';
 import {
+  type SelectOption,
   type NestFormField,
   type FormField,
   type SingleFormField,
@@ -16,7 +16,7 @@ import {
   type NestArrayFormField,
 } from '@/common';
 
-const WidthOptions: DefaultOptionType[] = [
+const WidthOptions: SelectOption[] = [
   { label: '自动', value: '-' },
   { label: '%', value: '%' },
   {
@@ -50,10 +50,11 @@ export const FieldEdit: FC<{
         break;
       case 'array':
         form.setFieldValue('itemType', 'string');
-        form.setFieldValue('ux', getFieldDefaultUx('array'));
+        form.setFieldValue('ux', { type: 'input' });
         break;
       case 'nest-array':
       case 'nest':
+        form.setFieldValue('ux', undefined);
         form.setFieldValue('items', [newSingleFormField()]);
         break;
       default:
@@ -86,7 +87,7 @@ export const FieldEdit: FC<{
               </Form.Item>
             )}
             {wu === '-' && (
-              <div className='flex h-8 flex-1 items-center rounded-bl-md rounded-tl-md border border-solid border-gray-300  px-2 text-xs text-gray-400'>
+              <div className='border-border flex h-8 flex-1 items-center rounded-bl-md rounded-tl-md border border-r-0 border-solid  px-2 text-xs text-gray-50'>
                 继承表单全局配置
               </div>
             )}
@@ -121,7 +122,7 @@ export const FieldEdit: FC<{
                     if (!v?.length || !v.trim()) return Promise.reject('不能为空');
                     else if (/^\s*\d/.test(v)) {
                       return Promise.reject('不能以数字打头');
-                    } else if (/[^_0-9a-z\u4e00-\u9fa5]/.test(v)) {
+                    } else if (/[^_0-9a-z\u4e00-\u9fa5]/i.test(v)) {
                       return Promise.reject('只能包含中文、英文字母、数字或下滑线');
                     } else if (v.length < 2) {
                       return Promise.reject('至少两个字符');

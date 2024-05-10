@@ -42,3 +42,12 @@ export function useNonFirstEffect(effect: EffectCallback, deps: DependencyList) 
     effect();
   }, deps);
 }
+
+export function formatDate(date?: Date | number) {
+  if (!date) date = new Date();
+  else if (isNum(date)) date = new Date(date);
+  const y = date.getFullYear();
+  const m = date.getMonth() + 1;
+  const d = date.getDate();
+  return `${y}-${m.toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
+}

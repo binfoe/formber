@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, type FC } from 'react';
+import { useContext, useState, type FC } from 'react';
 import { Modal, message } from 'antd';
 import { FieldEdit } from '../edit';
 import type {
@@ -24,43 +24,50 @@ function swap<T>(arr: T[], ia: number, ib: number) {
   arr[ib] = arr[ia];
   arr[ia] = tmp;
 }
-export const FieldList: FC<{ fields: FormField[] }> = ({ fields }) => {
-  const [copyFields, setFields] = useState<FormField[]>([]);
-  useEffect(() => {
-    setFields(fields ? fields.slice() : []);
-  }, [fields]);
+export const FieldList: FC<{
+  fields: FormField[];
+  /** 列表或其深度子元素发生更新。向上传递，通知最外层。 */
+  onUpdate: () => void;
+  /** 列表发生变更 */
+  onChange: (fields: FormField[]) => void;
+}> = ({ fields, onChange, onUpdate }) => {
   const updateFields = (newFields: FormField[]) => {
-    setFields(newFields);
+    // setFields(newFields);
+    // debugger;
+    onChange(newFields);
   };
-  return copyFields.map((field, idx) => (
+  return fields.map((field, idx) => (
     <Field
+      onUpdate={onUpdate}
       onInsert={(position) => {
-        const v = copyFields.slice();
+        const v = fields.slice();
         v.splice(position === 'pre' ? idx : idx + 1, 0, newSingleFormField());
         updateFields(v);
       }}
       onEdit={(data) => {
         Object.assign(field, data);
-        setFields((v) => v.slice());
+        updateFields(fields.slice());
       }}
       onDel={() => {
-        if (copyFields.length <= 1) {
+        if (fields.length <= 1) {
           return message.error('至少需要一个字段');
         }
-        const v = copyFields.slice();
-        v.splice(idx, 1);
-        updateFields(v);
+        const copyFields = fields.slice();
+        copyFields.splice(idx, 1);
+        updateFields(copyFields);
       }}
       onSort={(position) => {
         if (position === 'post') {
           if (idx < fields.length) {
+            const copyFields = fields.slice();
             swap(copyFields, idx, idx + 1);
             updateFields(copyFields.slice());
           }
         } else {
           if (idx > 0) {
+            const copyFields = fields.slice();
             swap(copyFields, idx - 1, idx);
-            updateFields(copyFields.slice());
+            updateFields(copyFields);
           }
         }
       }}
@@ -74,8 +81,10 @@ export const Field: FC<
   FieldControlProps & {
     onEdit: (data: Partial<FormField>) => void;
     field: FormField;
+    /** 深度子元素发生更新。向上传递，通知最外层。 */
+    onUpdate: () => void;
   }
-> = ({ field, onEdit, ...props }) => {
+> = ({ field, onEdit, onUpdate, ...props }) => {
   const type = field.type;
   const [editOpen, setEditOpen] = useState(false);
   const [ctrlVis, setCtrlVis] = useState(false);
@@ -121,9 +130,9 @@ export const Field: FC<
         className={cs(`cursor relative flex flex-col`)}
       >
         {type === 'nest-array' ? (
-          <NestArrayField field={field as NestArrayFormField} />
+          <NestArrayField onUpdate={onUpdate} field={field as NestArrayFormField} />
         ) : type === 'nest' ? (
-          <NestField field={field as NestFormField} />
+          <NestField onUpdate={onUpdate} field={field as NestFormField} />
         ) : type === 'array' ? (
           <ArrayField field={field as ArrayFormField} />
         ) : type === 'placeholder' ? (

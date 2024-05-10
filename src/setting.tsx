@@ -1,11 +1,10 @@
 import { useMemo, type FC } from 'react';
 import { Form as AForm, Button, Input, InputNumber, Select, Space } from 'antd';
 import type { FormInstance } from 'antd/lib';
-import type { DefaultOptionType } from 'antd/es/select';
 import type { Form, FormConfig } from './form';
-import type { FormFieldWidth } from './field';
+import type { FormFieldWidth, SelectOption } from './common';
 
-const UnitOptions: DefaultOptionType[] = [
+const UnitOptions: SelectOption[] = [
   { label: '%', value: '%' },
   {
     label: 'px',
@@ -36,10 +35,10 @@ const WidthCfg: FC<{ name: keyof FormConfig; form: FormInstance<Form> }> = ({ na
   );
 };
 export const FormSetting: FC<{
-  form: Form;
-  onSave: (data: Partial<Form>) => void;
+  settings: Pick<Form, 'name' | 'config'>;
+  onSave: (data: Pick<Form, 'name' | 'config'>) => void;
   onClose: () => void;
-}> = ({ form, onClose, onSave }) => {
+}> = ({ settings, onClose, onSave }) => {
   const [aform] = AForm.useForm<Form>();
   const submit = async () => {
     try {
@@ -49,10 +48,10 @@ export const FormSetting: FC<{
       console.error(ex);
     }
   };
-  const ks = useMemo(() => Object.keys(form.config) as (keyof FormConfig)[], [form.config]);
+  const ks = useMemo(() => Object.keys(settings.config) as (keyof FormConfig)[], [settings.config]);
   return (
     <div className='pt-4'>
-      <AForm initialValues={form} form={aform}>
+      <AForm initialValues={settings} form={aform}>
         <AForm.Item required rules={[{ required: true }]} name='name' label='表单名称'>
           <Input />
         </AForm.Item>

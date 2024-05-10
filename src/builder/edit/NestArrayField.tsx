@@ -9,7 +9,7 @@ export const NestArrayFieldEdit: FC<{
   return (
     <>
       {/* 当前版本 nest array field 没有表单编辑交互。但为了让 form.setFieldValue("items") 生效，需要注册 Form.Item */}
-      <Form.Item name='items' hidden />
+      <Form.Item name='items' hidden noStyle />
     </>
   );
 };
