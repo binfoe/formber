@@ -5,6 +5,7 @@ import { Button, ConfigProvider, Tabs, message } from 'antd';
 import './main.css';
 import {
   FormBuilder,
+  FormSettingsEdit,
   FormSubmitter,
   newFormDefaultSettings,
   newNestFormField,
@@ -40,7 +41,7 @@ export const DemoApp: FC = () => {
       <div className='p-4'>
         <h1>Former Demo</h1>
         <Tabs
-          defaultActiveKey='submitter'
+          // defaultActiveKey='submitter'
           destroyInactiveTabPane
           items={[
             {
@@ -48,12 +49,20 @@ export const DemoApp: FC = () => {
               label: 'Form Builder',
               children: (
                 <>
+                  <div className='mb-4 font-bold'>编辑表单配置</div>
+                  <FormSettingsEdit
+                    className='rounded-md border border-solid border-border'
+                    value={settings}
+                    onChange={(v) => {
+                      setSettings(v);
+                    }}
+                  />
+                  <div className='mb-4 mt-8 font-bold'>编辑表单字段</div>
                   <FormBuilder
+                    className='rounded-md border border-solid border-border'
                     ref={builder}
+                    settings={settings}
                     initFields={fields}
-                    initSettings={settings}
-                    settingsColSpan={12}
-                    // fieldsColSpan={16}
                   />
                   <div className='mt-4'>
                     <Button

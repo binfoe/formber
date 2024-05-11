@@ -1,8 +1,9 @@
-import { useState, type FC } from 'react';
-import { Form as AForm, InputNumber, Select, Space } from 'antd';
-import type { FormInstance } from 'antd/lib';
+import { useEffect, type FC } from 'react';
+import { InputNumber, Select, Space } from 'antd';
+import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { newFormDefaultSettings, type FormSettings } from '../form';
 import type { FormFieldWidth, SelectOption } from '../common';
+import { cs } from '@/util';
 
 const UnitOptions: SelectOption[] = [
   { label: '%', value: '%' },
@@ -11,7 +12,7 @@ const UnitOptions: SelectOption[] = [
     value: 'px',
   },
 ];
-const NameMap: Record<keyof FormSettings, string> = {
+export const NameMap: Record<keyof FormSettings, string> = {
   singleFieldWidth: '普通字段',
   arrayFieldWidth: '普通数组',
   nestArrayFieldWidth: '对象数组',
@@ -21,68 +22,83 @@ const getBound = (u: FormFieldWidth['u']) => {
   if (u === 'px') return { min: 80, max: 2000 };
   else return { min: 10, max: 100 };
 };
-const WidthCfg: FC<{ name: keyof FormSettings; form: FormInstance<FormSettings> }> = ({
-  name,
-  form,
-}) => {
-  const [bound, setBound] = useState(() => getBound(form.getFieldValue([name, 'u'])));
+const WidthCfg: FC<{ name: keyof FormSettings; onChange: () => void }> = ({ name, onChange }) => {
+  const { control } = useFormContext<FormSettings>();
 
   return (
-    <div className='flex w-full'>
-      <label className='pt-1'>{NameMap[name]}：</label>
-      <Space.Compact className='flex-1'>
-        <AForm.Item noStyle name={[name, 'v']}>
-          <InputNumber {...bound} className='flex-1' />
-        </AForm.Item>
-        <AForm.Item noStyle name={[name, 'u']}>
-          <Select
-            options={UnitOptions}
-            style={{ width: '30%' }}
-            onChange={(u) => {
-              const v = form.getFieldValue([name, 'v']);
-              const bound = getBound(u);
-              if (v < bound.min) {
-                form.setFieldValue([name, 'v'], bound.min);
-              } else if (v > bound.max) {
-                form.setFieldValue([name, 'v'], bound.max);
-              }
-              setBound(bound);
-            }}
-          />
-        </AForm.Item>
-      </Space.Compact>
+    <div className='flex w-full items-center gap-1'>
+      <label>{NameMap[name]}：</label>
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => {
+          const bound = getBound(field.value.u);
+          return (
+            <Space.Compact className='flex-1'>
+              <InputNumber
+                {...bound}
+                value={field.value.v}
+                onChange={(v) => {
+                  field.onChange({
+                    u: field.value.u,
+                    v,
+                  });
+                  onChange();
+                }}
+                className='flex-1'
+              />
+              <Select
+                value={field.value.u}
+                options={UnitOptions}
+                style={{ width: '30%' }}
+                onChange={(u) => {
+                  let v = field.value.v;
+
+                  const bound = getBound(u);
+                  if (v < bound.min) {
+                    v = bound.min;
+                  } else if (v > bound.max) {
+                    v = bound.max;
+                  }
+                  field.onChange({ u, v });
+                  onChange();
+                }}
+              />
+            </Space.Compact>
+          );
+        }}
+      />
     </div>
   );
 };
 
 const SettingKeys = Object.keys(newFormDefaultSettings()) as (keyof FormSettings)[];
 
-export const FormSetting: FC<{
-  settings: FormSettings;
+export const FormSettingsEdit: FC<{
+  value: FormSettings;
   onChange: (data: FormSettings) => void;
-  labelColSpan: number;
-  settingsColSpan: number;
-}> = ({ settings, labelColSpan, settingsColSpan, onChange }) => {
-  const [aform] = AForm.useForm<FormSettings>();
-  AForm.useWatch((values) => {
-    onChange(values);
-  }, aform);
+  className?: string;
+}> = ({ value, onChange, className }) => {
+  const form = useForm<FormSettings>({
+    defaultValues: value,
+  });
+  useEffect(() => {
+    form.reset(value);
+  }, [value]);
+
   return (
-    <div className='pt-4'>
-      <AForm
-        initialValues={settings}
-        form={aform}
-        wrapperCol={{ span: settingsColSpan }}
-        labelCol={{ span: labelColSpan }}
-      >
-        <AForm.Item required label='默认宽度'>
-          <div className='flex flex-col gap-4 rounded-md border border-solid border-border p-4'>
-            {SettingKeys.map((k) => (
-              <WidthCfg key={k} name={k} form={aform} />
-            ))}
-          </div>
-        </AForm.Item>
-      </AForm>
-    </div>
+    <FormProvider {...form}>
+      <div className={cs('flex flex-col gap-4 px-4 py-4', className)}>
+        {SettingKeys.map((k) => (
+          <WidthCfg
+            key={k}
+            name={k}
+            onChange={() => {
+              onChange(form.getValues());
+            }}
+          />
+        ))}
+      </div>
+    </FormProvider>
   );
 };
