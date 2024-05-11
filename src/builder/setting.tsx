@@ -1,8 +1,8 @@
 import { useMemo, type FC } from 'react';
 import { Form as AForm, Button, Input, InputNumber, Select, Space } from 'antd';
 import type { FormInstance } from 'antd/lib';
-import type { Form, FormConfig } from './form';
-import type { FormFieldWidth, SelectOption } from './common';
+import type { FormSchema, FormConfig } from '../form';
+import type { FormFieldWidth, SelectOption } from '../common';
 
 const UnitOptions: SelectOption[] = [
   { label: '%', value: '%' },
@@ -15,9 +15,12 @@ const NameMap: Record<keyof FormConfig, string> = {
   singleFieldWidth: '普通字段',
   arrayFieldWidth: '普通数组',
   nestArrayFieldWidth: '对象数组',
-  nestFieldWidth: '对象字段',
+  nestFieldWidth: '嵌套对象',
 };
-const WidthCfg: FC<{ name: keyof FormConfig; form: FormInstance<Form> }> = ({ name, form }) => {
+const WidthCfg: FC<{ name: keyof FormConfig; form: FormInstance<FormSchema> }> = ({
+  name,
+  form,
+}) => {
   const u = AForm.useWatch(['config', name, 'u'], form) as FormFieldWidth['u'];
   const isPx = u === 'px';
   return (
@@ -35,11 +38,11 @@ const WidthCfg: FC<{ name: keyof FormConfig; form: FormInstance<Form> }> = ({ na
   );
 };
 export const FormSetting: FC<{
-  settings: Pick<Form, 'name' | 'config'>;
-  onSave: (data: Pick<Form, 'name' | 'config'>) => void;
+  settings: Pick<FormSchema, 'name' | 'config'>;
+  onSave: (data: Pick<FormSchema, 'name' | 'config'>) => void;
   onClose: () => void;
 }> = ({ settings, onClose, onSave }) => {
-  const [aform] = AForm.useForm<Form>();
+  const [aform] = AForm.useForm<FormSchema>();
   const submit = async () => {
     try {
       const res = await aform.validateFields();
@@ -56,7 +59,7 @@ export const FormSetting: FC<{
           <Input />
         </AForm.Item>
         <AForm.Item required label='默认宽度'>
-          <div className='flex flex-col gap-4 rounded-md border border-solid border-gray-300 p-4'>
+          <div className='flex flex-col gap-4 rounded-md border border-solid border-border p-4'>
             {ks.map((k) => (
               <WidthCfg key={k} name={k} form={aform} />
             ))}

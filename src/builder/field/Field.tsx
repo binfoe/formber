@@ -1,5 +1,5 @@
 import { useContext, useState, type FC } from 'react';
-import { Modal, message } from 'antd';
+import { Modal } from 'antd';
 import { FieldEdit } from '../edit';
 import type {
   ArrayFormField,
@@ -9,6 +9,7 @@ import type {
   PlaceholderFormField,
   SingleFormField,
 } from '../../common';
+import { useValidate } from '../validate';
 import { FieldControl, type FieldControlProps } from './Control';
 import { SingleField } from './SingleField';
 import { NestField } from './NestField';
@@ -16,7 +17,7 @@ import { ArrayField } from './ArrayField';
 import { getFieldDefaultWidth, newSingleFormField } from './helper';
 import { NestArrayField } from './NestArrayField';
 import { PlaceholderField } from './PlaceholderField';
-import { cs } from '@/util';
+import { cs, isStr } from '@/util';
 import { globalFormConfigContext } from '@/form';
 
 function swap<T>(arr: T[], ia: number, ib: number) {
@@ -27,21 +28,35 @@ function swap<T>(arr: T[], ia: number, ib: number) {
 export const FieldList: FC<{
   fields: FormField[];
   /** 列表或其深度子元素发生更新。向上传递，通知最外层。 */
-  onUpdate: () => void;
+  // onUpdate: () => void;
   /** 列表发生变更 */
   onChange: (fields: FormField[]) => void;
-}> = ({ fields, onChange, onUpdate }) => {
+}> = ({ fields, onChange }) => {
   const updateFields = (newFields: FormField[]) => {
     // setFields(newFields);
     // debugger;
     onChange(newFields);
   };
+  if (!fields.length) {
+    return (
+      <div
+        onClick={() => {
+          const copyFields = fields.slice();
+          copyFields.push(newSingleFormField(''));
+          updateFields(copyFields);
+        }}
+        className='flex h-8 w-full cursor-pointer items-center px-2 text-xs text-gray-50 hover:text-gray-500'
+      >
+        暂无字段，点此添加
+      </div>
+    );
+  }
   return fields.map((field, idx) => (
     <Field
-      onUpdate={onUpdate}
+      // onUpdate={onUpdate}
       onInsert={(position) => {
         const v = fields.slice();
-        v.splice(position === 'pre' ? idx : idx + 1, 0, newSingleFormField());
+        v.splice(position === 'pre' ? idx : idx + 1, 0, newSingleFormField(''));
         updateFields(v);
       }}
       onEdit={(data) => {
@@ -49,9 +64,6 @@ export const FieldList: FC<{
         updateFields(fields.slice());
       }}
       onDel={() => {
-        if (fields.length <= 1) {
-          return message.error('至少需要一个字段');
-        }
         const copyFields = fields.slice();
         copyFields.splice(idx, 1);
         updateFields(copyFields);
@@ -82,16 +94,27 @@ export const Field: FC<
     onEdit: (data: Partial<FormField>) => void;
     field: FormField;
     /** 深度子元素发生更新。向上传递，通知最外层。 */
-    onUpdate: () => void;
+    // onUpdate: () => void;
   }
-> = ({ field, onEdit, onUpdate, ...props }) => {
+> = ({ field, onEdit, onInsert, onDel, onSort }) => {
   const type = field.type;
   const [editOpen, setEditOpen] = useState(false);
   const [ctrlVis, setCtrlVis] = useState(false);
   const cfg = useContext(globalFormConfigContext);
   const width =
     field.width?.u && field.width.u !== '-' ? field.width : getFieldDefaultWidth(cfg, type);
-
+  const [err, setErr] = useState('');
+  useValidate(() => {
+    if (field.type !== 'placeholder' && isStr(field.name) && !field.name.trim()) {
+      setErr('字段名称不能为空');
+      return false;
+    }
+    if ((field.type === 'nest' || field.type === 'nest-array') && !field.items?.length) {
+      setErr('至少添加一个字段');
+      return false;
+    }
+    return true;
+  }, [field]);
   return (
     <>
       <Modal
@@ -108,6 +131,7 @@ export const Field: FC<
           <FieldEdit
             onSave={(data) => {
               setEditOpen(false);
+              setErr('');
               onEdit(data);
             }}
             onCancel={() => {
@@ -130,9 +154,19 @@ export const Field: FC<
         className={cs(`cursor relative flex flex-col`)}
       >
         {type === 'nest-array' ? (
-          <NestArrayField onUpdate={onUpdate} field={field as NestArrayFormField} />
+          <NestArrayField
+            onChange={() => {
+              setErr('');
+            }}
+            field={field as NestArrayFormField}
+          />
         ) : type === 'nest' ? (
-          <NestField onUpdate={onUpdate} field={field as NestFormField} />
+          <NestField
+            onChange={() => {
+              setErr('');
+            }}
+            field={field as NestFormField}
+          />
         ) : type === 'array' ? (
           <ArrayField field={field as ArrayFormField} />
         ) : type === 'placeholder' ? (
@@ -140,13 +174,16 @@ export const Field: FC<
         ) : (
           <SingleField field={field as SingleFormField} />
         )}
+        {err && <div className='pl-2 pt-1 text-xs text-error'>{err}</div>}
         <FieldControl
           mode={type === 'nest' || type === 'nest-array' ? 'float' : 'cover'}
           visible={ctrlVis || editOpen}
           onEdit={() => {
             setEditOpen(true);
           }}
-          {...props}
+          onInsert={onInsert}
+          onDel={onDel}
+          onSort={onSort}
         />
       </div>
     </>

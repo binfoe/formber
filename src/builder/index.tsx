@@ -1,20 +1,60 @@
-import { useState, type FC } from 'react';
+/* eslint-disable react/display-name */
+import { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 import { Button, ConfigProvider, Modal } from 'antd';
-import type { Form } from '../form';
-import { globalFormConfigContext, globalStyleConfig } from '../form';
+import type { FormSchema } from '../form';
+import { globalFormConfigContext, globalStyleConfig, newFormDefaultConfig } from '../form';
 import { cs } from '../util';
-import { FormSetting } from '../setting';
+import { FormSetting } from './setting';
 import { FieldList } from './field';
+import { ValidateContext } from './validate';
 import AntDesignSettingOutlined from '~icons/ant-design/setting-outlined';
 
-export const FormBuilder: FC<{
-  className?: string;
-  form: Form;
-  onUpdate: () => void;
-}> = ({ className, form, onUpdate }) => {
+export interface FormBuilder {
+  exportSchema: () => FormSchema | undefined;
+}
+export const FormBuilder = forwardRef<
+  FormBuilder,
+  {
+    className?: string;
+    initSchema?: FormSchema;
+    onSettingsChange?: (settings: Pick<FormSchema, 'config' | 'name'>) => void;
+  }
+>(({ className, initSchema, onSettingsChange }, ref) => {
   const [settingOpen, setSettingOpen] = useState(false);
-  const [items, setItems] = useState(form.fields);
-  const [settings, setSettings] = useState({ name: form.name, config: form.config });
+  const [fields, setFields] = useState(initSchema?.fields ?? []);
+  const [settings, setSettings] = useState({
+    name: initSchema?.name ?? '',
+    config: {
+      ...newFormDefaultConfig(),
+      ...initSchema?.config,
+    },
+  });
+  const validateEmitters = useMemo(() => new Set<() => boolean>(), []);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      exportSchema() {
+        let hasErr = false;
+        validateEmitters.forEach((validateFn) => {
+          if (!validateFn()) hasErr = true;
+        });
+        if (hasErr) return undefined;
+        return {
+          ...settings,
+          fields,
+        };
+      },
+    }),
+    [settings, fields],
+  );
+
+  // useEffect(() => {
+  //   console.log(initSchema);
+  //   return () => {
+  //     console.log('destroy');
+  //   };
+  // }, []);
 
   return (
     <div className={cs('flex h-full w-full flex-col', className)}>
@@ -23,9 +63,8 @@ export const FormBuilder: FC<{
           <FormSetting
             onSave={(data) => {
               setSettings(data);
+              onSettingsChange?.(data);
               setSettingOpen(false);
-              Object.assign(form, data);
-              onUpdate();
             }}
             onClose={() => {
               setSettingOpen(false);
@@ -45,26 +84,33 @@ export const FormBuilder: FC<{
         />
       </div>
       <globalFormConfigContext.Provider value={settings.config}>
-        <ConfigProvider
-          theme={{
-            components: globalStyleConfig,
-          }}
-        >
-          <div className='border-border flex flex-wrap items-start gap-y-4 rounded-md border border-solid px-2 py-4'>
-            <FieldList
-              onUpdate={() => {
-                onUpdate();
-              }}
-              onChange={(fields) => {
-                setItems(fields);
-                form.fields = fields;
-                onUpdate();
-              }}
-              fields={items}
-            />
-          </div>
-        </ConfigProvider>
+        <ValidateContext.Provider value={validateEmitters}>
+          <ConfigProvider
+            theme={{
+              components: globalStyleConfig,
+            }}
+          >
+            <div className='flex flex-wrap items-start gap-y-4 rounded-md border border-solid border-border px-2 py-4'>
+              <FieldList
+                // onUpdate={() => {
+                //   onUpdate?.({
+                //     ...settings,
+                //     fields,
+                //   });
+                // }}
+                onChange={(fields) => {
+                  setFields(fields);
+                  // onUpdate?.({
+                  //   ...settings,
+                  //   fields,
+                  // });
+                }}
+                fields={fields}
+              />
+            </div>
+          </ConfigProvider>
+        </ValidateContext.Provider>
       </globalFormConfigContext.Provider>
     </div>
   );
-};
+});

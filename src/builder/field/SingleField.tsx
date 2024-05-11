@@ -25,7 +25,9 @@ export const SingleField: FC<SingleFieldProps> = ({ field }) => {
         {ux.type === 'input' && <Input className='w-full' />}
         {ux.type === 'number-input' && <InputNumber className='w-full' />}
         {ux.type === 'select' && <Select placeholder='选择值' className='w-full' options={opts} />}
-        {ux.type === 'radio' && <Radio.Group className='w-full' options={opts} />}
+        {ux.type === 'radio' && (
+          <Radio.Group className='flex h-8 w-full items-center' options={opts} />
+        )}
         {ux.type === 'switch' && <Switch />}
         {ux.type === 'picker' && <DatePicker className='w-full' />}
       </div>

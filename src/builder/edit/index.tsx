@@ -55,7 +55,7 @@ export const FieldEdit: FC<{
       case 'nest-array':
       case 'nest':
         form.setFieldValue('ux', undefined);
-        form.setFieldValue('items', [newSingleFormField()]);
+        form.setFieldValue('items', [newSingleFormField('')]);
         break;
       default:
         form.setFieldValue('ux', getFieldDefaultUx(type));
@@ -87,7 +87,7 @@ export const FieldEdit: FC<{
               </Form.Item>
             )}
             {wu === '-' && (
-              <div className='border-border flex h-8 flex-1 items-center rounded-bl-md rounded-tl-md border border-r-0 border-solid  px-2 text-xs text-gray-50'>
+              <div className='flex h-8 flex-1 items-center rounded-bl-md rounded-tl-md border border-r-0 border-solid border-border  px-2 text-xs text-gray-50'>
                 继承表单全局配置
               </div>
             )}

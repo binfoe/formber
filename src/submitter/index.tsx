@@ -1,48 +1,58 @@
-import { useMemo, type FC } from 'react';
+/* eslint-disable react/display-name */
+import { forwardRef, useImperativeHandle, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { Button, ConfigProvider } from 'antd';
-import type { Form } from '../form';
+import { ConfigProvider } from 'antd';
+import type { FormSchema } from '../form';
 import { globalFormConfigContext, globalStyleConfig } from '../form';
 import { cs } from '../util';
 import { FieldList } from './field';
 
-export const FormSubmitter: FC<{
-  className?: string;
-  form: Form;
-}> = ({ className, form }) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface FormSubmitter<T = any> {
+  /**
+   * 获取表单数据，如果返回 undefined 说明校验未通过
+   * @param validate 是否校验，默认为 true
+   */
+  getData: (validate?: boolean) => Promise<T | undefined>;
+}
+export const FormSubmitter = forwardRef<
+  FormSubmitter,
+  {
+    className?: string;
+    schema: FormSchema;
+  }
+>(({ className, schema }, ref) => {
   const hookForm = useForm();
   const rootNamePath = useMemo(() => [], []);
-  const onSubmit = (data: any) => {
-    console.log(data);
-  };
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      async getData() {
+        const success = await hookForm.trigger();
+        if (!success) return undefined;
+        return hookForm.getValues();
+      },
+    }),
+    [hookForm],
+  );
   return (
     <div className={cs('flex h-full w-full flex-col', className)}>
-      <div className='mb-4 text-lg font-bold'>{form.name}</div>
+      <div className='mb-4 text-lg font-bold'>{schema.name}</div>
 
-      <globalFormConfigContext.Provider value={form.config}>
+      <globalFormConfigContext.Provider value={schema.config}>
         <FormProvider {...hookForm}>
           <ConfigProvider
             theme={{
               components: globalStyleConfig,
             }}
           >
-            <form className='border-border flex flex-wrap items-start gap-y-4 rounded-md border border-solid px-2 py-4'>
-              <FieldList fields={form.fields} parentPath={rootNamePath} />
+            <form className='flex flex-wrap items-start gap-y-4 rounded-md border border-solid border-border px-2 py-4'>
+              <FieldList fields={schema.fields} parentPath={rootNamePath} />
             </form>
           </ConfigProvider>
         </FormProvider>
       </globalFormConfigContext.Provider>
-
-      <div className='mt-4 flex items-center justify-end'>
-        <Button
-          type='primary'
-          onClick={() => {
-            void hookForm.handleSubmit(onSubmit)();
-          }}
-        >
-          保存
-        </Button>
-      </div>
     </div>
   );
-};
+});

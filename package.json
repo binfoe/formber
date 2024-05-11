@@ -12,10 +12,10 @@
     "build": "tsc --noEmit && vite build -c scripts/vite.config.ts",
     "lint": "eslint './{src,scripts}/**/*.{ts,tsx}' --fix",
     "lint-staged": "lint-staged",
-    "prepare": "husky prepare"
+    "prepare": "husky"
   },
   "lint-staged": {
-    "*.{js,ts}": "eslint --fix"
+    "*.{tsx,ts}": "eslint --fix"
   },
   "repository": {
     "type": "git",

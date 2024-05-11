@@ -6,7 +6,7 @@ export const PlaceholderField: FC<{ field: PlaceholderFormField }> = ({ field })
   return (
     <>
       <FieldLabel className='mb-2' field={field} />
-      <div className='p-2 text-xs text-gray-400'>占位空白</div>
+      <div className='p-2 text-center text-xs text-gray-100'>占位空白</div>
     </>
   );
 };

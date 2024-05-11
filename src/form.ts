@@ -1,15 +1,18 @@
 import { createContext } from 'react';
 import type { FormField, FormFieldWidth } from './common';
-export interface Form {
+export interface FormSchema {
   name: string;
   fields: FormField[];
   config: FormConfig;
 }
-export function newForm(name?: string): Form {
+export function newFormSchema(
+  name: string,
+  options?: Partial<Omit<FormSchema, 'name'>>,
+): FormSchema {
   return {
-    name: name ?? '新表单',
-    config: newFormDefaultConfig(),
-    fields: [],
+    name: name,
+    config: options?.config ?? newFormDefaultConfig(),
+    fields: options?.fields ?? [],
   };
 }
 export interface FormConfig {
@@ -28,20 +31,13 @@ export function newFormDefaultConfig() {
 }
 export const globalFormConfigContext = createContext({} as unknown as FormConfig);
 
+const Sty = {
+  controlHeight: 32,
+};
 export const globalStyleConfig = {
-  Input: {
-    controlHeight: 33,
-  },
-  // DatePicker: {
-  //   controlHeight: 33,
-  // },
-  InputNumber: {
-    controlHeight: 33,
-  },
-  Select: {
-    controlHeight: 32,
-  },
-  Checkbox: {
-    controlHeight: 32,
-  },
+  Input: Sty,
+  DatePicker: Sty,
+  InputNumber: Sty,
+  Select: Sty,
+  Checkbox: Sty,
 };

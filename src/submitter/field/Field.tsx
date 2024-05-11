@@ -1,4 +1,4 @@
-import { useContext, type FC } from 'react';
+import { useContext, useMemo, type FC } from 'react';
 import { SingleField } from './SingleField';
 import { NestField } from './NestField';
 import { ArrayField } from './ArrayField';
@@ -16,21 +16,30 @@ import { cs } from '@/util';
 import { globalFormConfigContext } from '@/form';
 import { getFieldDefaultWidth } from '@/builder/field';
 
-export const FieldList: FC<{ fields: FormField[]; parentPath: string[] }> = ({
+export const FieldList: FC<{ fields: FormField[]; parentPath: (string | number)[] }> = ({
   fields,
   parentPath,
 }) => {
+  if (!fields.length) {
+    return (
+      <div className='flex h-8 items-center px-2 text-center text-xs text-disabled-text'>
+        无字段
+      </div>
+    );
+  }
   return fields.map((field) => <Field key={field.id} field={field} parentPath={parentPath} />);
 };
 
 export const Field: FC<{
   field: FormField;
-  parentPath: string[];
+  parentPath: (string | number)[];
 }> = ({ field, parentPath }) => {
   const type = field.type;
   const cfg = useContext(globalFormConfigContext);
-  const width =
-    field.width?.u && field.width.u !== '-' ? field.width : getFieldDefaultWidth(cfg, type);
+  const width = useMemo(
+    () => (field.width?.u && field.width.u !== '-' ? field.width : getFieldDefaultWidth(cfg, type)),
+    [field.width, cfg, type],
+  );
 
   return (
     <div

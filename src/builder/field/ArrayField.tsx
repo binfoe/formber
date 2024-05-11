@@ -38,7 +38,7 @@ export const ArrayField: FC<{ field: ArrayFormField }> = ({ field }) => {
           demoValues.map((_, i) => (
             <div key={i} style={{ width: '20%' }} className='flex items-center px-2'>
               <Space.Compact className='flex w-full items-center'>
-                {itemType === 'string' && <Input className='h-8 w-full' placeholder='示例值' />}
+                {itemType === 'string' && <Input className='w-full' placeholder='示例值' />}
                 {itemType === 'number' && <InputNumber className='w-full' placeholder='示例值' />}
                 {itemType === 'date' && <DatePicker className='w-full' placeholder='示例值' />}
                 <Button
@@ -50,9 +50,13 @@ export const ArrayField: FC<{ field: ArrayFormField }> = ({ field }) => {
               </Space.Compact>
             </div>
           ))}
-        {ux.type === 'checkbox' && <Checkbox.Group options={opts} />}
+        {ux.type === 'checkbox' && (
+          <Checkbox.Group className='flex h-8 items-center px-2' options={opts} />
+        )}
         {ux.type === 'select' && (
-          <Select className='w-full' mode='multiple' placeholder='多项选择' options={opts} />
+          <div className='w-full px-2'>
+            <Select className='w-full' mode='multiple' placeholder='多项选择' options={opts} />
+          </div>
         )}
       </div>
     </>

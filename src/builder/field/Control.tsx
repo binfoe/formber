@@ -1,6 +1,5 @@
 import type { FC } from 'react';
 import { Button, Popconfirm } from 'antd';
-import ButtonGroup from 'antd/es/button/button-group';
 import AntDesignLeftOutlined from '~icons/ant-design/left-outlined';
 import AntDesignRightOutlined from '~icons/ant-design/right-outlined';
 import AntDesignEditOutlined from '~icons/ant-design/edit-outlined';
@@ -23,19 +22,18 @@ export const FieldControl: FC<
   return (
     <div
       className={cs(
-        'mask absolute z-10 items-center justify-between rounded-md bg-black bg-opacity-20',
+        'mask absolute left-2 z-10 w-[calc(100%-16px)] items-center justify-between rounded-md bg-black bg-opacity-20',
         visible ? 'flex' : 'hidden',
-        mode === 'cover' ? 'left-0 top-0 h-full w-full' : 'left-1/2 top-0 -translate-x-1/2 py-1',
+        mode === 'cover' ? 'h-full' : 'py-1',
       )}
     >
-      <Button
-        onClick={() => {
-          onInsert('pre');
-        }}
-        className='relative -translate-x-1/2'
-        icon={<AntDesignPlusCircleOutlined />}
-      />
-      <ButtonGroup>
+      <Button.Group className='relative left-1/2 -translate-x-1/2'>
+        <Button
+          onClick={() => {
+            onInsert('pre');
+          }}
+          icon={<AntDesignPlusCircleOutlined />}
+        />
         <Button
           onClick={() => {
             onSort('pre');
@@ -62,14 +60,13 @@ export const FieldControl: FC<
           }}
           icon={<AntDesignRightOutlined />}
         />
-      </ButtonGroup>
-      <Button
-        onClick={() => {
-          onInsert('post');
-        }}
-        className='relative translate-x-1/2'
-        icon={<AntDesignPlusCircleOutlined />}
-      />
+        <Button
+          onClick={() => {
+            onInsert('post');
+          }}
+          icon={<AntDesignPlusCircleOutlined />}
+        />
+      </Button.Group>
     </div>
   );
 };

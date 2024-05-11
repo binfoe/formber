@@ -12,16 +12,16 @@ import { cs } from '@/util';
 import AntDesignQuestionCircleOutlined from '~icons/ant-design/question-circle-outlined';
 
 const Ic: Record<FormField['type'], ReactNode> = {
-  string: <CarbonStringText />,
-  number: <CarbonStringInteger />,
-  bool: <CarbonBoolean />,
-  date: <MaterialSymbolsLightDateRangeSharp />,
-  array: <MaterialSymbolsDataArray />,
-  nest: <MaterialSymbolsDataObject />,
+  string: <CarbonStringText className='text-secondary-text' />,
+  number: <CarbonStringInteger className='text-secondary-text' />,
+  bool: <CarbonBoolean className='text-secondary-text' />,
+  date: <MaterialSymbolsLightDateRangeSharp className='text-secondary-text' />,
+  array: <MaterialSymbolsDataArray className='text-secondary-text' />,
+  nest: <MaterialSymbolsDataObject className='text-secondary-text' />,
   'nest-array': (
     <>
-      <MaterialSymbolsDataArray />
-      <MaterialSymbolsDataObject />
+      <MaterialSymbolsDataArray className='text-secondary-text' />
+      <MaterialSymbolsDataObject className='text-secondary-text' />
     </>
   ),
   placeholder: null,

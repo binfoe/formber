@@ -1,5 +1,5 @@
 import { useMemo, type FC } from 'react';
-import { Checkbox, Input, InputNumber, Radio, Select, Switch } from 'antd';
+import { Input, InputNumber, Radio, Select, Switch } from 'antd';
 import { Controller, useFormContext } from 'react-hook-form';
 import type { SingleFormField } from '@/common';
 import { FieldLabel } from '@/builder/field';
@@ -7,13 +7,12 @@ import { DatePicker } from '@/date-picker';
 
 export interface SingleFieldProps {
   field: SingleFormField;
-  parentPath: string[];
+  parentPath: (string | number)[];
 }
 export const SingleField: FC<SingleFieldProps> = ({ field, parentPath }) => {
   const { control } = useFormContext();
   const namePath = useMemo(() => [...parentPath, field.name].join('.'), [parentPath]);
   const ux = field.ux;
-  console.log(ux);
 
   return (
     <>

@@ -6,7 +6,7 @@ export interface FormFieldWidth {
 }
 export type BaseFormField = {
   id: string;
-  name: string;
+  name: string | number;
   tip?: string;
   width: FormFieldWidth;
 };
