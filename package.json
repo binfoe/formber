@@ -1,11 +1,11 @@
 {
-  "name": "@binfoe/former",
+  "name": "formber",
   "version": "0.0.1",
   "description": "form builder for 2b business",
   "type": "module",
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
-  "esnext": "dist/index.mjs",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "esnext": "dist/index.js",
   "types": "src/index.ts",
   "scripts": {
     "demo": "vite dev -c scripts/vite.demo.config.ts",
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/binfoe/former.git"
+    "url": "git+https://github.com/binfoe/formber.git"
   },
   "keywords": [
     "former",
@@ -30,9 +30,9 @@
   "author": "YuhangGe <abeyuhang@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/binfoe/former/issues"
+    "url": "https://github.com/binfoe/formber/issues"
   },
-  "homepage": "https://github.com/binfoe/former#readme",
+  "homepage": "https://github.com/binfoe/formber#readme",
   "devDependencies": {
     "@ant-design/colors": "^7.0.2",
     "@iconify/json": "^2.2.208",
