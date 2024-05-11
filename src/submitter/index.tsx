@@ -19,9 +19,10 @@ export const FormSubmitter = forwardRef<
   FormSubmitter,
   {
     className?: string;
-    schema: FormSchema;
+    fields: FormSchema['fields'];
+    settings: FormSchema['settings'];
   }
->(({ className, schema }, ref) => {
+>(({ className, fields, settings }, ref) => {
   const hookForm = useForm();
   const rootNamePath = useMemo(() => [], []);
 
@@ -37,22 +38,23 @@ export const FormSubmitter = forwardRef<
     [hookForm],
   );
   return (
-    <div className={cs('flex h-full w-full flex-col', className)}>
-      <div className='mb-4 text-lg font-bold'>{schema.name}</div>
-
-      <globalFormConfigContext.Provider value={schema.config}>
-        <FormProvider {...hookForm}>
-          <ConfigProvider
-            theme={{
-              components: globalStyleConfig,
-            }}
+    <globalFormConfigContext.Provider value={settings}>
+      <FormProvider {...hookForm}>
+        <ConfigProvider
+          theme={{
+            components: globalStyleConfig,
+          }}
+        >
+          <form
+            className={cs(
+              'flex flex-wrap items-start gap-y-4 rounded-md border border-solid border-border px-2 py-4',
+              className,
+            )}
           >
-            <form className='flex flex-wrap items-start gap-y-4 rounded-md border border-solid border-border px-2 py-4'>
-              <FieldList fields={schema.fields} parentPath={rootNamePath} />
-            </form>
-          </ConfigProvider>
-        </FormProvider>
-      </globalFormConfigContext.Provider>
-    </div>
+            <FieldList fields={fields} parentPath={rootNamePath} />
+          </form>
+        </ConfigProvider>
+      </FormProvider>
+    </globalFormConfigContext.Provider>
   );
 });

@@ -1,6 +1,6 @@
 {
   "name": "formber",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "form builder for 2b business",
   "type": "module",
   "main": "dist/index.js",

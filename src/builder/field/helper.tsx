@@ -7,7 +7,7 @@ import type {
   NestFormField,
   NestArrayFormField,
 } from '../../common';
-import { type FormConfig } from '@/form';
+import { type FormSettings } from '@/form';
 import { isNum, uid } from '@/util';
 
 function newFormField(
@@ -58,7 +58,7 @@ export function newNestArrayFormField(
   return x;
 }
 
-export function getFieldDefaultWidth(cfg: FormConfig, type: FormField['type']) {
+export function getFieldDefaultWidth(cfg: FormSettings, type: FormField['type']) {
   if (type === 'nest-array') return cfg.nestArrayFieldWidth;
   if (type === 'array') return cfg.arrayFieldWidth;
   if (type === 'nest') return cfg.nestFieldWidth;
@@ -72,6 +72,14 @@ const emptyLabels: Partial<Record<FormField['type'], string>> = {
 };
 export function getFieldDisplayLabel(field: FormField) {
   if (isNum(field.name) || field.name)
-    return <span className='text-leading-text'>{field.name}</span>;
-  return <span className='italic text-gray-100'>{emptyLabels[field.type] ?? '普通字段'}</span>;
+    return (
+      <span className='overflow-hidden text-ellipsis whitespace-nowrap text-leading-text'>
+        {field.name}
+      </span>
+    );
+  return (
+    <span className='overflow-hidden text-ellipsis whitespace-nowrap italic text-gray-100'>
+      {emptyLabels[field.type] ?? '普通字段'}
+    </span>
+  );
 }

@@ -11,17 +11,18 @@ import MaterialSymbolsLightDateRangeSharp from '~icons/material-symbols-light/da
 import { cs } from '@/util';
 import AntDesignQuestionCircleOutlined from '~icons/ant-design/question-circle-outlined';
 
+const IcCls = 'text-secondary-text flex-shrink-0';
 const Ic: Record<FormField['type'], ReactNode> = {
-  string: <CarbonStringText className='text-secondary-text' />,
-  number: <CarbonStringInteger className='text-secondary-text' />,
-  bool: <CarbonBoolean className='text-secondary-text' />,
-  date: <MaterialSymbolsLightDateRangeSharp className='text-secondary-text' />,
-  array: <MaterialSymbolsDataArray className='text-secondary-text' />,
-  nest: <MaterialSymbolsDataObject className='text-secondary-text' />,
+  string: <CarbonStringText className={IcCls} />,
+  number: <CarbonStringInteger className={IcCls} />,
+  bool: <CarbonBoolean className={IcCls} />,
+  date: <MaterialSymbolsLightDateRangeSharp className={IcCls} />,
+  array: <MaterialSymbolsDataArray className={IcCls} />,
+  nest: <MaterialSymbolsDataObject className={IcCls} />,
   'nest-array': (
     <>
-      <MaterialSymbolsDataArray className='text-secondary-text' />
-      <MaterialSymbolsDataObject className='text-secondary-text' />
+      <MaterialSymbolsDataArray className={IcCls} />
+      <MaterialSymbolsDataObject className={IcCls} />
     </>
   ),
   placeholder: null,
@@ -30,13 +31,13 @@ export const FieldLabel: FC<{ className?: string; field: FormField }> = ({ class
   return field.type === 'placeholder' ? (
     <label className={className}>&nbsp;</label>
   ) : (
-    <label className={cs('flex items-center gap-2', className)}>
+    <label className={cs('flex items-center gap-2 pr-2', className)}>
       {Ic[field.type]}
       {field.type === 'array' && Ic[field.itemType]}
       {getFieldDisplayLabel(field)}
       {field.tip && (
         <Tooltip title={field.tip}>
-          <AntDesignQuestionCircleOutlined className='cursor-pointer text-xs text-gray-400' />
+          <AntDesignQuestionCircleOutlined className='flex-shrink-0 cursor-pointer text-xs text-gray-400' />
         </Tooltip>
       )}
     </label>

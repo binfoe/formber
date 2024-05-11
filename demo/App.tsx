@@ -6,34 +6,31 @@ import './main.css';
 import {
   FormBuilder,
   FormSubmitter,
-  newArrayFormField,
-  newFormSchema,
-  newNestArrayFormField,
+  newFormDefaultSettings,
   newNestFormField,
   newSingleFormField,
 } from '@/index';
+import type { FormField } from '@/common';
+
+const InitFields: FormField[] = [
+  newSingleFormField('姓名'),
+  newSingleFormField('年龄'),
+  newSingleFormField('性别'),
+  newSingleFormField('身份证号'),
+  newNestFormField('住宅信息', {
+    items: [
+      newSingleFormField('地址'),
+      newSingleFormField('产权面积', {
+        type: 'number',
+      }),
+    ],
+  }),
+];
+const InitSettings = newFormDefaultSettings();
 
 export const DemoApp: FC = () => {
-  const [formSchema, setFormSchema] = useState(() =>
-    newFormSchema('基础信息', {
-      fields: [
-        newArrayFormField('xxx'),
-        newNestArrayFormField('ppp'),
-        newSingleFormField('姓名'),
-        newSingleFormField('年龄'),
-        newSingleFormField('性别'),
-        newSingleFormField('身份证号'),
-        newNestFormField('住宅信息', {
-          items: [
-            newSingleFormField('地址'),
-            newSingleFormField('产权面积', {
-              type: 'number',
-            }),
-          ],
-        }),
-      ],
-    }),
-  );
+  const [fields, setFields] = useState(InitFields);
+  const [settings, setSettings] = useState(InitSettings);
 
   const builder = useRef<FormBuilder>(null);
   const submitter = useRef<FormSubmitter>(null);
@@ -52,14 +49,11 @@ export const DemoApp: FC = () => {
               children: (
                 <>
                   <FormBuilder
-                    onSettingsChange={(data) => {
-                      setFormSchema((v) => ({
-                        ...data,
-                        fields: v.fields,
-                      }));
-                    }}
                     ref={builder}
-                    initSchema={formSchema}
+                    initFields={fields}
+                    initSettings={settings}
+                    settingsColSpan={12}
+                    // fieldsColSpan={16}
                   />
                   <div className='mt-4'>
                     <Button
@@ -70,7 +64,8 @@ export const DemoApp: FC = () => {
                           void message.error('校验失败');
                         } else {
                           void message.success('保存成功');
-                          setFormSchema(schema);
+                          setSettings(schema.settings);
+                          setFields(schema.fields);
                         }
                       }}
                       type='primary'
@@ -86,7 +81,7 @@ export const DemoApp: FC = () => {
               label: 'Form Submitter',
               children: (
                 <>
-                  <FormSubmitter ref={submitter} schema={formSchema} />
+                  <FormSubmitter ref={submitter} fields={fields} settings={settings} />
                   <div className='mt-4'>
                     <Button
                       onClick={async () => {
