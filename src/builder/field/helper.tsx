@@ -78,7 +78,7 @@ export function getFieldDisplayLabel(field: FormField) {
       </span>
     );
   return (
-    <span className='overflow-hidden text-ellipsis whitespace-nowrap italic text-gray-100'>
+    <span className='overflow-hidden text-ellipsis whitespace-nowrap text-gray-100'>
       {emptyLabels[field.type] ?? '普通字段'}
     </span>
   );

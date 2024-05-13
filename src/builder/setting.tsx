@@ -94,7 +94,8 @@ export const FormSettingsEdit: FC<{
             key={k}
             name={k}
             onChange={() => {
-              onChange(form.getValues());
+              const data = form.getValues();
+              onChange(data);
             }}
           />
         ))}

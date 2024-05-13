@@ -13,7 +13,7 @@ import type {
   SingleFormField,
 } from '@/common';
 import { cs } from '@/util';
-import { globalFormConfigContext } from '@/form';
+import { FormSettingsContext } from '@/form';
 import { getFieldDefaultWidth } from '@/builder/field';
 
 export const FieldList: FC<{ fields: FormField[]; parentPath: (string | number)[] }> = ({
@@ -35,7 +35,7 @@ export const Field: FC<{
   parentPath: (string | number)[];
 }> = ({ field, parentPath }) => {
   const type = field.type;
-  const cfg = useContext(globalFormConfigContext);
+  const cfg = useContext(FormSettingsContext);
   const width = useMemo(
     () => (field.width?.u && field.width.u !== '-' ? field.width : getFieldDefaultWidth(cfg, type)),
     [field.width, cfg, type],

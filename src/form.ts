@@ -24,7 +24,7 @@ export function newFormDefaultSettings() {
     nestArrayFieldWidth: { v: 100, u: '%' },
   } as FormSettings;
 }
-export const globalFormConfigContext = createContext({} as unknown as FormSettings);
+export const FormSettingsContext = createContext({} as unknown as FormSettings);
 
 const Sty = {
   controlHeight: 32,

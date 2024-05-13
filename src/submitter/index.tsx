@@ -3,7 +3,7 @@ import { forwardRef, useImperativeHandle, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { ConfigProvider } from 'antd';
 import type { FormSchema } from '../form';
-import { globalFormConfigContext, globalStyleConfig } from '../form';
+import { FormSettingsContext, globalStyleConfig } from '../form';
 import { cs } from '../util';
 import { FieldList } from './field';
 
@@ -38,7 +38,7 @@ export const FormSubmitter = forwardRef<
     [hookForm],
   );
   return (
-    <globalFormConfigContext.Provider value={settings}>
+    <FormSettingsContext.Provider value={settings}>
       <FormProvider {...hookForm}>
         <ConfigProvider
           theme={{
@@ -55,6 +55,6 @@ export const FormSubmitter = forwardRef<
           </form>
         </ConfigProvider>
       </FormProvider>
-    </globalFormConfigContext.Provider>
+    </FormSettingsContext.Provider>
   );
 });

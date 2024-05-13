@@ -18,7 +18,7 @@ import { getFieldDefaultWidth, newSingleFormField } from './helper';
 import { NestArrayField } from './NestArrayField';
 import { PlaceholderField } from './PlaceholderField';
 import { cs, isStr } from '@/util';
-import { globalFormConfigContext } from '@/form';
+import { FormSettingsContext } from '@/form';
 
 function swap<T>(arr: T[], ia: number, ib: number) {
   const tmp = arr[ib];
@@ -100,7 +100,7 @@ export const Field: FC<
   const type = field.type;
   const [editOpen, setEditOpen] = useState(false);
   const [ctrlVis, setCtrlVis] = useState(false);
-  const cfg = useContext(globalFormConfigContext);
+  const cfg = useContext(FormSettingsContext);
   const width =
     field.width?.u && field.width.u !== '-' ? field.width : getFieldDefaultWidth(cfg, type);
   const [err, setErr] = useState('');

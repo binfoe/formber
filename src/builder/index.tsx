@@ -3,7 +3,7 @@ import { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from 'r
 import { ConfigProvider } from 'antd';
 
 import type { FormSchema, FormSettings } from '../form';
-import { globalFormConfigContext, globalStyleConfig, newFormDefaultSettings } from '../form';
+import { FormSettingsContext, globalStyleConfig, newFormDefaultSettings } from '../form';
 import { cs } from '../util';
 import { FieldList } from './field';
 import { ValidateContext } from './validate';
@@ -23,7 +23,9 @@ export const FormBuilder = forwardRef<
   const [fields, setFields] = useState(initFields ?? []);
   const [settings, setSettings] = useState(() => propSettings ?? newFormDefaultSettings());
   useEffect(() => {
-    if (propSettings) setSettings(settings);
+    if (propSettings && propSettings !== settings) {
+      setSettings(propSettings);
+    }
   }, [propSettings]);
 
   const validateEmitters = useMemo(() => new Set<() => boolean>(), []);
@@ -54,7 +56,7 @@ export const FormBuilder = forwardRef<
   // }, []);
 
   return (
-    <globalFormConfigContext.Provider value={settings}>
+    <FormSettingsContext.Provider value={settings}>
       <ValidateContext.Provider value={validateEmitters}>
         <ConfigProvider
           theme={{
@@ -81,6 +83,6 @@ export const FormBuilder = forwardRef<
           </div>
         </ConfigProvider>
       </ValidateContext.Provider>
-    </globalFormConfigContext.Provider>
+    </FormSettingsContext.Provider>
   );
 });
