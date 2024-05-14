@@ -90,7 +90,12 @@ export const DemoApp: FC = () => {
               label: 'Form Submitter',
               children: (
                 <>
-                  <FormSubmitter ref={submitter} fields={fields} settings={settings} />
+                  <FormSubmitter
+                    className='rounded-md border border-solid border-border px-2 py-4'
+                    ref={submitter}
+                    fields={fields}
+                    settings={settings}
+                  />
                   <div className='mt-4'>
                     <Button
                       onClick={async () => {

@@ -45,12 +45,7 @@ export const FormSubmitter = forwardRef<
             components: globalStyleConfig,
           }}
         >
-          <form
-            className={cs(
-              'flex flex-wrap items-start gap-y-4 rounded-md border border-solid border-border px-2 py-4',
-              className,
-            )}
-          >
+          <form className={cs('flex flex-wrap items-start gap-y-4', className)}>
             <FieldList fields={fields} parentPath={rootNamePath} />
           </form>
         </ConfigProvider>
