@@ -1,6 +1,6 @@
 {
   "name": "formber",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "form builder for 2b business",
   "type": "module",
   "main": "dist/index.js",
@@ -35,16 +35,16 @@
   "homepage": "https://github.com/binfoe/formber#readme",
   "devDependencies": {
     "@ant-design/colors": "^7.0.2",
-    "@iconify/json": "^2.2.208",
+    "@iconify/json": "^2.2.209",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
-    "@types/node": "^20.12.11",
-    "@types/react": "^18.3.1",
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.3.2",
     "@types/react-dom": "^18.3.0",
-    "@typescript-eslint/eslint-plugin": "^7.8.0",
-    "@typescript-eslint/parser": "^7.8.0",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
     "@vitejs/plugin-react-swc": "^3.6.0",
-    "antd": "^5.17.0",
+    "antd": "^5.17.2",
     "autoprefixer": "^10.4.19",
     "date-fns": "^3.6.0",
     "eslint": "^8.57.0",
@@ -74,9 +74,9 @@
   },
   "peerDependencies": {
     "antd": "*",
-    "react": "*",
-    "react-hook-form": "*",
     "date-fns": "*",
-    "rc-picker": "*"
+    "rc-picker": "*",
+    "react": "*",
+    "react-hook-form": "*"
   }
 }
