@@ -21,9 +21,12 @@ export const FormSubmitter = forwardRef<
     className?: string;
     fields: FormSchema['fields'];
     settings: FormSchema['settings'];
+    initData?: Record<string, unknown>;
   }
->(({ className, fields, settings }, ref) => {
-  const hookForm = useForm();
+>(({ className, fields, settings, initData }, ref) => {
+  const hookForm = useForm({
+    defaultValues: initData ?? {},
+  });
   const rootNamePath = useMemo(() => [], []);
 
   useImperativeHandle(

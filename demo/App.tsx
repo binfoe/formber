@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { useRef, useState, type FC } from 'react';
+import { useMemo, useRef, useState, type FC } from 'react';
 import zhCN from 'antd/locale/zh_CN';
 import { Button, ConfigProvider, Tabs, message } from 'antd';
 import './main.css';
@@ -32,7 +32,13 @@ const InitSettings = newFormDefaultSettings();
 export const DemoApp: FC = () => {
   const [fields, setFields] = useState(InitFields);
   const [settings, setSettings] = useState(InitSettings);
-
+  const initData: Record<string, unknown> | undefined = useMemo(() => {
+    try {
+      return JSON.parse(sessionStorage.getItem('FORMBER.DATA') ?? 'undefined');
+    } catch (ex) {
+      return undefined;
+    }
+  }, []);
   const builder = useRef<FormBuilder>(null);
   const submitter = useRef<FormSubmitter>(null);
 
@@ -95,13 +101,14 @@ export const DemoApp: FC = () => {
                     ref={submitter}
                     fields={fields}
                     settings={settings}
+                    initData={initData}
                   />
                   <div className='mt-4'>
                     <Button
                       onClick={async () => {
                         if (!submitter.current) return;
                         const data = await submitter.current.getData();
-                        console.log(data);
+                        sessionStorage.setItem('FORMBER.DATA', JSON.stringify(data));
                         void message.success('提交完成: ' + JSON.stringify(data));
                       }}
                       type='primary'
